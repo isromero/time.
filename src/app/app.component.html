@@ -1,1 +1,46 @@
-<router-outlet />
+<div class="flex px-40 justify-center">
+  <nav class="sidebar">
+    <div>
+      <h1 class="font-extrabold text-3xl">time.</h1>
+      <ul>
+        <li>Home</li>
+        <li>Habit log</li>
+        <li>Goals</li>
+        <li>Tasks</li>
+        <li>Timer</li>
+        <li>Groups</li>
+        <li>Guardados</li>
+        <li>Opciones</li>
+      </ul>
+    </div>
+    <div>
+      <button
+        class="theme-toggle theme-toggle--force-motion"
+        [class.theme-toggle--toggled]="themeService.isToggled()"
+        type="button"
+        title="Toggle theme"
+        aria-label="Toggle theme"
+        (click)="themeService.toggleTheme()"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+          width="1em"
+          height="1em"
+          class="theme-toggle__eclipse"
+          fill="currentColor"
+          viewBox="0 0 32 32"
+        >
+          <clipPath id="theme-toggle__eclipse__cutout">
+            <path d="M0 0h64v32h-64zm36 16a1 1 0 0024 1 1 1 0 00-24-1" />
+          </clipPath>
+          <g clip-path="url(#theme-toggle__eclipse__cutout)">
+            <circle cx="16" cy="16" r="16" />
+          </g>
+        </svg>
+      </button>
+      <div>usuario</div>
+    </div>
+  </nav>
+  <main class="border border-black"><router-outlet /></main>
+</div>
