@@ -3,12 +3,30 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@core/*": ["src/app/core/*"],
-      "@shared/*": ["src/app/shared/*"],
-      "@features/*": ["src/app/features/*"],
-      "@spartan-ng/ui-avatar-helm": ["libs/ui/ui-avatar-helm/src/index.ts"],
-      "@spartan-ng/ui-button-helm": ["libs/ui/ui-button-helm/src/index.ts"],
-      "@spartan-ng/ui-switch-helm": ["libs/ui/ui-switch-helm/src/index.ts"]
+      "@core/*": [
+        "src/app/core/*"
+      ],
+      "@shared/*": [
+        "src/app/shared/*"
+      ],
+      "@features/*": [
+        "src/app/features/*"
+      ],
+      "@spartan-ng/ui-avatar-helm": [
+        "libs/ui/ui-avatar-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-button-helm": [
+        "libs/ui/ui-button-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-switch-helm": [
+        "libs/ui/ui-switch-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-icon-helm": [
+        "./libs/ui/ui-icon-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-popover-helm": [
+        "./libs/ui/ui-popover-helm/src/index.ts"
+      ]
     },
     "outDir": "./dist/out-tsc",
     "strict": true,
@@ -26,7 +44,10 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "ES2022",
-    "lib": ["ES2022", "dom"]
+    "lib": [
+      "ES2022",
+      "dom"
+    ]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
