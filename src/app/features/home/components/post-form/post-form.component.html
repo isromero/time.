@@ -1,0 +1,46 @@
+<form
+  aria-label="Create a new post"
+  class="flex gap-x-4 border-b border-gray-400 pb-4"
+>
+  <hlm-avatar>
+    <img
+      src="/assets/avatar.png"
+      alt="spartan logo. Resembling a spartanic shield"
+      hlmAvatarImage
+    />
+    <span class="text-white bg-destructive" hlmAvatarFallback>NOMBRE</span>
+  </hlm-avatar>
+  <div class="flex flex-col w-full">
+    <textarea
+      [(ngModel)]="postContent"
+      name="postContent"
+      hlmInput
+      placeholder="Share something that will inspire others..."
+      class="border-none resize-none min-h-20"
+      maxlength="500"
+    ></textarea>
+    <div class="flex justify-between items-center mt-2">
+      <div class="flex gap-x-4">
+        <hlm-tooltip>
+          <button hlmTooltipTrigger aria-describedby="Upload a image">
+            <app-hlm-icon [config]="{ name: 'lucideImage', size: 'sm' }" />
+          </button>
+          <span *brnTooltipContent>Upload a image</span>
+        </hlm-tooltip>
+        <hlm-tooltip>
+          <button hlmTooltipTrigger aria-describedby="Create a survey">
+            <app-hlm-icon
+              [config]="{ name: 'lucideChartBarBig', size: 'sm' }"
+            />
+          </button>
+          <span *brnTooltipContent>Create a survey</span>
+        </hlm-tooltip>
+      </div>
+      <div class="flex justify-end items-center text-xs text-gray-400">
+        <span>{{ postContent.length }}</span>
+        <span>/500</span>
+        <button hlmBtn size="sm" type="submit" class="ml-2">Post</button>
+      </div>
+    </div>
+  </div>
+</form>

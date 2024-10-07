@@ -83,7 +83,7 @@
       <brn-popover>
         <button
           brnPopoverTrigger
-          class="flex gap-x-2 items-center hover:bg-muted rounded-full px-6 py-2"
+          class="flex gap-x-4 items-center hover:bg-muted rounded-full px-6 py-2"
         >
           <hlm-avatar>
             <img
@@ -91,11 +91,13 @@
               alt="spartan logo. Resembling a spartanic shield"
               hlmAvatarImage
             />
-            <span class="text-white bg-destructive" hlmAvatarFallback>NA</span>
+            <span class="text-white bg-destructive" hlmAvatarFallback
+              >NOMBRE</span
+            >
           </hlm-avatar>
-          <div class="flex flex-col mr-6">
-            <span class="text-lg font-semibold">user</span>
-            <span class="text-sm">&#64;username</span>
+          <div class="flex flex-col mr-4">
+            <span class="text-lg font-semibold text-left">user</span>
+            <span class="text-sm text-left">&#64;username</span>
           </div>
           <app-hlm-icon [config]="{ name: 'lucideEllipsis' }" />
         </button>
@@ -105,7 +107,7 @@
       </brn-popover>
     </div>
   </nav>
-  <main class="border border-black dark:border-background border-y-0 px-6 py-8">
+  <main class="border border-gray-400 border-y-0 px-6 pt-8 w-[30rem]">
     <router-outlet />
   </main>
 </div>

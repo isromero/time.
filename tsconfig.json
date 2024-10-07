@@ -26,6 +26,15 @@
       ],
       "@spartan-ng/ui-popover-helm": [
         "./libs/ui/ui-popover-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-input-helm": [
+        "./libs/ui/ui-input-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-formfield-helm": [
+        "./libs/ui/ui-formfield-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-tooltip-helm": [
+        "./libs/ui/ui-tooltip-helm/src/index.ts"
       ]
     },
     "outDir": "./dist/out-tsc",

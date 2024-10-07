@@ -10,6 +10,8 @@ import {
   lucideSettings2,
   lucideUsers,
   lucideEllipsis,
+  lucideImage,
+  lucideChartBarBig,
 } from '@ng-icons/lucide';
 import { HlmIconComponent } from '@spartan-ng/ui-icon-helm';
 
@@ -33,6 +35,8 @@ interface IconConfig {
       lucideBookmark,
       lucideSettings2,
       lucideEllipsis,
+      lucideImage,
+      lucideChartBarBig,
     }),
   ],
   template: `
