@@ -15,6 +15,8 @@ import {
   HlmPopoverContentDirective,
 } from '@spartan-ng/ui-popover-helm';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
+import { AuthService } from '@core/auth/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -37,11 +39,29 @@ import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
   styleUrl: './app.component.css',
 })
 export class AppComponent {
-  title = 'time';
-
   themeService: ThemeService = inject(ThemeService);
+  authService: AuthService = inject(AuthService);
+  router: Router = inject(Router);
 
   constructor() {
     this.themeService.updateTheme();
+    this.authService.user$.subscribe((user) => {
+      if (user) {
+        this.authService.currentUserSignal.set({
+          email: user.email,
+          username: (user as any).displayName,
+        });
+      } else {
+        this.authService.currentUserSignal.set(null);
+      }
+    });
+  }
+
+  logout(): void {
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigateByUrl('/login');
+      },
+    });
   }
 }

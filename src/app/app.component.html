@@ -97,12 +97,16 @@
           </hlm-avatar>
           <div class="flex flex-col mr-4">
             <span class="text-lg font-semibold text-left">user</span>
-            <span class="text-sm text-left">&#64;username</span>
+            <span class="text-sm text-left"
+              >&#64;{{ authService.currentUserSignal()?.username }}</span
+            >
           </div>
           <app-hlm-icon [config]="{ name: 'lucideEllipsis' }" />
         </button>
         <div hlmPopoverContent *brnPopoverContent class="rounded-full w-56">
-          <a routerLink="/logout" class="text-destructive">Cerrar sesión</a>
+          <button (click)="logout()" class="text-destructive">
+            Cerrar sesión
+          </button>
         </div>
       </brn-popover>
     </div>

@@ -1,4 +1,7 @@
 <h1>Login</h1>
+@if (errorMessage) {
+<p class="text-destructive">{{ errorMessage }}</p>
+}
 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
   <input
     hmlInput

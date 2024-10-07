@@ -2,6 +2,8 @@ import { Component, inject } from '@angular/core';
 import { HlmInputDirective } from '@spartan-ng/ui-input-helm';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
+import { AuthService } from '@core/auth/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -11,16 +13,27 @@ import { ReactiveFormsModule } from '@angular/forms';
   styleUrl: './login.component.css',
 })
 export class LoginComponent {
-  formBuilder: FormBuilder = inject(FormBuilder);
+  formBuilder = inject(FormBuilder);
+  authService = inject(AuthService);
+  router = inject(Router);
 
   loginForm = this.formBuilder.nonNullable.group({
     email: ['', Validators.required],
     password: ['', Validators.required],
   });
+  errorMessage: string | null = '';
 
   onSubmit() {
     if (this.loginForm.valid) {
-      console.log(this.loginForm.value);
+      const rawForm = this.loginForm.getRawValue();
+      this.authService.login(rawForm.email, rawForm.password).subscribe({
+        next: () => {
+          this.router.navigateByUrl('/');
+        },
+        error: (error) => {
+          this.errorMessage = error.code;
+        },
+      });
     }
   }
 }

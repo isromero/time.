@@ -1,4 +1,7 @@
 <h1>Register</h1>
+@if (errorMessage) {
+<p class="text-destructive">{{ errorMessage }}</p>
+}
 <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
   <input
     hmlInput
