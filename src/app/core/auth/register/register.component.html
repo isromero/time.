@@ -1,0 +1,27 @@
+<h1>Register</h1>
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+  <input
+    hmlInput
+    formControlName="username"
+    label="Username"
+    type="text"
+    placeholder="Enter your username"
+  />
+  <input
+    hmlInput
+    formControlName="email"
+    label="Email"
+    type="email"
+    placeholder="Enter your email"
+  />
+  <input
+    hmlInput
+    formControlName="password"
+    label="Password"
+    type="password"
+    placeholder="Enter your password"
+  />
+  <button hlmBtn type="submit" [disabled]="registerForm.invalid">
+    Register
+  </button>
+</form>

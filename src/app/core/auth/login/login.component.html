@@ -1,0 +1,18 @@
+<h1>Login</h1>
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <input
+    hmlInput
+    formControlName="email"
+    label="Email"
+    type="email"
+    placeholder="Enter your email"
+  />
+  <input
+    hmlInput
+    formControlName="password"
+    label="Password"
+    type="password"
+    placeholder="Enter your password"
+  />
+  <button hlmBtn type="submit" [disabled]="loginForm.invalid">Login</button>
+</form>
