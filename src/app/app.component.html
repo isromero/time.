@@ -1,3 +1,8 @@
+@if (loading) {
+<div class="flex min-h-screen justify-center items-center">
+  <hlm-spinner />
+</div>
+} @else {
 <div class="flex min-h-screen justify-center px-8 gap-x-8">
   <nav class="sidebar flex flex-col justify-between py-8 sticky top-0 h-screen">
     <div>
@@ -115,3 +120,4 @@
     <router-outlet />
   </main>
 </div>
+}

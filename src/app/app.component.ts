@@ -17,6 +17,7 @@ import {
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { AuthService } from '@core/auth/auth.service';
 import { Router } from '@angular/router';
+import { HlmSpinnerComponent } from '@spartan-ng/ui-spinner-helm';
 
 @Component({
   selector: 'app-root',
@@ -34,11 +35,13 @@ import { Router } from '@angular/router';
     HlmPopoverCloseDirective,
     HlmPopoverContentDirective,
     HlmButtonDirective,
+    HlmSpinnerComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
 export class AppComponent {
+  loading: boolean = true;
   themeService: ThemeService = inject(ThemeService);
   authService: AuthService = inject(AuthService);
   router: Router = inject(Router);
@@ -54,6 +57,7 @@ export class AppComponent {
       } else {
         this.authService.currentUserSignal.set(null);
       }
+      this.loading = false;
     });
   }
 

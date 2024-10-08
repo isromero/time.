@@ -35,6 +35,9 @@
       ],
       "@spartan-ng/ui-tooltip-helm": [
         "./libs/ui/ui-tooltip-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-spinner-helm": [
+        "./libs/ui/ui-spinner-helm/src/index.ts"
       ]
     },
     "outDir": "./dist/out-tsc",
