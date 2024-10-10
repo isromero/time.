@@ -1,30 +1,58 @@
-<h1>Register</h1>
-@if (errorMessage) {
-<p class="text-destructive">{{ errorMessage }}</p>
-}
-<form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-  <input
-    hmlInput
-    formControlName="username"
-    label="Username"
-    type="text"
-    placeholder="Enter your username"
-  />
-  <input
-    hmlInput
-    formControlName="email"
-    label="Email"
-    type="email"
-    placeholder="Enter your email"
-  />
-  <input
-    hmlInput
-    formControlName="password"
-    label="Password"
-    type="password"
-    placeholder="Enter your password"
-  />
-  <button hlmBtn type="submit" [disabled]="registerForm.invalid">
-    Register
-  </button>
-</form>
+<div class="flex items-center justify-center min-h-screen">
+  <form
+    hlmCard
+    [formGroup]="registerForm"
+    (ngSubmit)="onSubmit()"
+    class="xs:px-10 xs:w-[30rem] xs:py-8 rounded-lg"
+  >
+    <div hlmCardHeader>
+      <h3 hlmCardTitle>Register with your email</h3>
+      @if (errorMessage) {
+      <p hlmCardDescription class="text-destructive">{{ errorMessage }}</p>
+      }
+    </div>
+    <div hlmCardContent class="flex flex-col">
+      <label hlmLabel for="username">Username</label>
+      <input
+        hlmInput
+        formControlName="username"
+        label="username"
+        type="text"
+        placeholder="Enter your username"
+        class="mb-4 mt-2"
+      />
+      <label hlmLabel for="email">Email</label>
+      <input
+        hlmInput
+        formControlName="email"
+        label="Email"
+        type="email"
+        placeholder="Enter your email"
+        class="mb-4 mt-2"
+      />
+      <label hlmLabel for="password">Password</label>
+      <input
+        hlmInput
+        formControlName="password"
+        label="Password"
+        type="password"
+        placeholder="Enter your password"
+        class="mt-2"
+      />
+    </div>
+    <div hlmCardFooter class="flex flex-col">
+      <button
+        hlmBtn
+        type="submit"
+        class="w-full"
+        [disabled]="registerForm.invalid"
+      >
+        Register
+      </button>
+      <span class="text-center text-xs mt-4">
+        Already have an account?
+        <a hlmLink [routerLink]="'/login'" class="hover:underline">Login</a>
+      </span>
+    </div>
+  </form>
+</div>

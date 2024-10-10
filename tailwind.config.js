@@ -4,7 +4,11 @@ module.exports = {
   darkMode: "selector",
   content: ["./src/**/*.{html,ts}", "./libs/**/*.{html,ts}"],
   theme: {
-    extend: {},
+    extend: {
+      screens: {
+        xs: "320px",
+      },
+    },
   },
   plugins: [],
 };

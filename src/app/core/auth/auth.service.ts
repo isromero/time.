@@ -27,9 +27,13 @@ export class AuthService {
       this.firebaseAuth,
       email,
       password
-    ).then((response) =>
-      updateProfile(response.user, { displayName: username })
-    );
+    )
+      .then((response) =>
+        updateProfile(response.user, { displayName: username })
+      )
+      .then(() => {
+        return this.firebaseAuth.currentUser?.reload(); // To make sure that user is updated
+      });
 
     // Convert the promise to an observable
     return from(promise);

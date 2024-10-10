@@ -7,6 +7,7 @@ import {
   redirectLoggedInTo,
   canActivate,
 } from '@angular/fire/auth-guard';
+import { MainLayoutComponent } from '@shared/layouts/main-layout/main-layout.component';
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['login']);
 const redirectLoggedInToHome = () => redirectLoggedInTo(['']);
@@ -26,10 +27,17 @@ export const routes: Routes = [
   },
   {
     path: '',
-    component: HomeComponent,
-    title: 'Home | time.',
+    component: MainLayoutComponent,
+    title: 'time.',
     ...canActivate(redirectUnauthorizedToLogin),
+    children: [
+      {
+        path: '',
+        component: HomeComponent,
+        title: 'Home | time.',
+      },
+      { path: 'home', redirectTo: '' },
+      { path: '**', redirectTo: '' },
+    ],
   },
-  { path: 'home', redirectTo: '' },
-  { path: '**', redirectTo: '' },
 ];
