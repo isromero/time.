@@ -7,10 +7,10 @@ import { DOCUMENT, isPlatformBrowser } from '@angular/common';
   providedIn: 'root',
 })
 export class ThemeService {
-  currentTheme = signal<Theme>('dark');
-  isToggled = signal<boolean>(false);
   private document: Document = inject(DOCUMENT);
   private platformId = inject(PLATFORM_ID);
+  private currentThemeSignal = signal<Theme>('dark');
+  isToggledSignal = signal<boolean>(false);
 
   setTheme(theme: Theme) {
     if (isPlatformBrowser(this.platformId)) {
@@ -18,8 +18,8 @@ export class ThemeService {
       htmlDOM?.classList.remove('dark', 'light');
       htmlDOM?.classList.add(theme);
       setLocalStorage('theme', theme);
-      this.currentTheme.set(theme);
-      this.isToggled.set(theme === 'dark');
+      this.currentThemeSignal.set(theme);
+      this.isToggledSignal.set(theme === 'dark');
     }
   }
 
@@ -35,20 +35,20 @@ export class ThemeService {
         this.setTheme(theme);
       }
     } else {
-      this.currentTheme.set('dark');
-      this.isToggled.set(true);
+      this.currentThemeSignal.set('dark');
+      this.isToggledSignal.set(true);
     }
   }
 
   toggleTheme() {
     if (isPlatformBrowser(this.platformId)) {
-      const currentTheme = this.currentTheme();
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      const currentThemeSignal = this.currentThemeSignal();
+      const newTheme = currentThemeSignal === 'dark' ? 'light' : 'dark';
       this.setTheme(newTheme);
     }
   }
 
   isDarkTheme(): boolean {
-    return this.currentTheme() === 'dark';
+    return this.currentThemeSignal() === 'dark';
   }
 }

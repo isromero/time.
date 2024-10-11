@@ -35,9 +35,9 @@ import { HlmLabelDirective } from '@spartan-ng/ui-label-helm';
   styleUrl: './register.component.css',
 })
 export class RegisterComponent {
-  formBuilder: FormBuilder = inject(FormBuilder);
-  authService: AuthService = inject(AuthService);
-  router: Router = inject(Router);
+  private formBuilder: FormBuilder = inject(FormBuilder);
+  private authService: AuthService = inject(AuthService);
+  private router: Router = inject(Router);
 
   registerForm = this.formBuilder.nonNullable.group({
     username: ['', Validators.required],

@@ -13,9 +13,9 @@ import { HlmSpinnerComponent } from '@spartan-ng/ui-spinner-helm';
   styleUrl: './app.component.css',
 })
 export class AppComponent {
+  private themeService: ThemeService = inject(ThemeService);
+  private authService: AuthService = inject(AuthService);
   loading: boolean = true;
-  themeService: ThemeService = inject(ThemeService);
-  authService: AuthService = inject(AuthService);
 
   constructor() {
     this.themeService.updateTheme();

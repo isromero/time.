@@ -35,9 +35,9 @@ import { HlmLabelDirective } from '@spartan-ng/ui-label-helm';
   styleUrl: './login.component.css',
 })
 export class LoginComponent {
-  formBuilder = inject(FormBuilder);
-  authService = inject(AuthService);
-  router = inject(Router);
+  private formBuilder = inject(FormBuilder);
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
   loginForm = this.formBuilder.nonNullable.group({
     email: ['', Validators.required],

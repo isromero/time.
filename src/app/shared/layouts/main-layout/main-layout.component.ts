@@ -38,7 +38,7 @@ import { Router } from '@angular/router';
 export class MainLayoutComponent {
   themeService: ThemeService = inject(ThemeService);
   authService: AuthService = inject(AuthService);
-  router: Router = inject(Router);
+  private router: Router = inject(Router);
 
   logout(): void {
     this.authService.logout().subscribe({

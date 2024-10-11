@@ -1,14 +1,14 @@
 import { Injectable, inject, signal } from '@angular/core';
 import {
   Auth,
-  UserCredential,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
   user,
 } from '@angular/fire/auth';
-import { getFirestore, doc, setDoc } from '@angular/fire/firestore';
+import { doc, setDoc } from '@angular/fire/firestore';
+import { Firestore } from '@angular/fire/firestore';
 import { User } from '@shared/models/user.interface';
 import { Observable, from } from 'rxjs';
 
@@ -16,11 +16,10 @@ import { Observable, from } from 'rxjs';
   providedIn: 'root',
 })
 export class AuthService {
-  firebaseAuth: Auth = inject(Auth);
+  private firebaseAuth: Auth = inject(Auth);
+  private firestore: Firestore = inject(Firestore);
   user$: Observable<User | null> = user(this.firebaseAuth);
   currentUserSignal = signal<User | null | undefined>(undefined);
-
-  firestore = getFirestore();
 
   register(
     username: string,
