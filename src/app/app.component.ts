@@ -22,6 +22,7 @@ export class AppComponent {
     this.authService.user$.subscribe((user) => {
       if (user) {
         this.authService.currentUserSignal.set({
+          uid: user.uid,
           email: user.email,
           username: (user as any).displayName,
         });

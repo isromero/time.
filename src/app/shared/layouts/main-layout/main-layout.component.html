@@ -55,7 +55,7 @@
     </div>
     <div>
       <button
-        class="theme-toggle theme-toggle--force-motion pl-6"
+        class="theme-toggle theme-toggle--force-motion pl-6 mb-4"
         [class.theme-toggle--toggled]="themeService.isToggled()"
         type="button"
         title="Toggle theme"
@@ -83,7 +83,7 @@
       <brn-popover>
         <button
           brnPopoverTrigger
-          class="flex gap-x-4 items-center hover:bg-muted rounded-full px-6 py-2"
+          class="flex gap-x-4 items-center justify-center hover:bg-muted rounded-full px-6 py-2"
         >
           <hlm-avatar>
             <img
@@ -95,12 +95,9 @@
               >NOMBRE</span
             >
           </hlm-avatar>
-          <div class="flex flex-col mr-4">
-            <span class="text-lg font-semibold text-left">user</span>
-            <span class="text-sm text-left"
-              >&#64;{{ authService.currentUserSignal()?.username }}</span
-            >
-          </div>
+          <span class="text-sm mb-1 text-left"
+            >&#64;{{ authService.currentUserSignal()?.username }}</span
+          >
           <app-hlm-icon [config]="{ name: 'lucideEllipsis' }" />
         </button>
         <div hlmPopoverContent *brnPopoverContent class="rounded-full w-56">
