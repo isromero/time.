@@ -50,7 +50,6 @@ export class AuthService {
           createdAt: new Date(),
         });
       } catch (error) {
-        console.error(error);
         throw error;
       }
     };
@@ -64,7 +63,6 @@ export class AuthService {
       try {
         await signInWithEmailAndPassword(this.firebaseAuth, email, password);
       } catch (error) {
-        console.error(error);
         throw error;
       }
     };

@@ -1,11 +1,3 @@
-import {
-  Firestore,
-  collection,
-  collectionData,
-  addDoc,
-  CollectionReference,
-  DocumentReference,
-} from '@angular/fire/firestore';
 import { Component, inject } from '@angular/core';
 import { HlmAvatarComponent } from '@spartan-ng/ui-avatar-helm';
 import { HlmInputDirective } from '@spartan-ng/ui-input-helm';
@@ -17,8 +9,7 @@ import {
   HlmTooltipComponent,
   HlmTooltipTriggerDirective,
 } from '@spartan-ng/ui-tooltip-helm';
-import { User } from '@shared/models/user.interface';
-import { Observable } from 'rxjs';
+import { PostFormService } from './post-form.service';
 
 @Component({
   selector: 'app-post-form',
@@ -34,25 +25,38 @@ import { Observable } from 'rxjs';
     HlmTooltipTriggerDirective,
   ],
   templateUrl: './post-form.component.html',
-  styleUrl: './post-form.component.css',
+  styleUrls: ['./post-form.component.css'],
 })
 export class PostFormComponent {
-  private firestore: Firestore = inject(Firestore);
-  users$: Observable<User>;
+  postFormService: PostFormService = inject(PostFormService);
 
   postContent: string = '';
+  uploadedImages: { file: File; url: string }[] = [];
 
-  constructor() {
-    // get a reference to the user-profile collection
-    const userProfileCollection = collection(this.firestore, 'users');
+  post() {
+    this.postFormService
+      .createPost(this.postContent, this.uploadedImages)
+      .subscribe();
 
-    // get documents (data) from the collection using collectionData
-    this.users$ = collectionData(userProfileCollection) as Observable<User>;
+    this.postContent = '';
+    this.uploadedImages = [];
+  }
 
-    console.log(
-      this.users$.subscribe((users) => {
-        console.log(users);
-      })
-    );
+  onImageUpload(event: Event) {
+    const fileInput = event.target as HTMLInputElement;
+    if (fileInput.files && fileInput.files.length > 0) {
+      this.uploadedImages = [
+        ...this.uploadedImages,
+        ...Array.from(fileInput.files).map((file) => ({
+          file,
+          url: URL.createObjectURL(file),
+        })),
+      ];
+    }
+  }
+
+  removeImage(index: number) {
+    URL.revokeObjectURL(this.uploadedImages[index].url);
+    this.uploadedImages.splice(index, 1);
   }
 }
