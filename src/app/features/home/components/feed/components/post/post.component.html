@@ -1,0 +1,39 @@
+<article class="border-b border-gray-400 py-4">
+  <div class="flex gap-x-2 items-center">
+    <hlm-avatar>
+      <img
+        src="/assets/avatar.png"
+        alt="spartan logo. Resembling a spartanic shield"
+        hlmAvatarImage
+      />
+      <span class="text-white bg-destructive" hlmAvatarFallback>NOMBRE</span>
+    </hlm-avatar>
+    <span class="text-sm mb-1 text-left block">&#64;hola</span>
+    <span class="text-sm mb-1 text-muted-foreground block">-</span>
+    <span class="text-sm mb-1 text-muted-foreground block">{{
+      post.createdAt | relativeTime
+    }}</span>
+  </div>
+  <div class="pl-12">
+    <p class="break-words">{{ post.postContent }}</p>
+    @if (imageDownloadUrls$ | async; as imageUrls) {
+    <div [ngClass]="['mt-2 grid gap-1', getGridClass(imageUrls.length)]">
+      @for (imageUrl of imageUrls; track imageUrl; let i = $index) { @if
+      (imageUrl) {
+      <div
+        [ngClass]="{
+          'col-span-2 row-span-2': imageUrls.length === 3 && i === 0
+        }"
+        class="relative"
+      >
+        <img
+          [src]="imageUrl"
+          class="w-full h-full object-cover rounded-lg"
+          [ngStyle]="{ 'aspect-ratio': imageUrls.length === 1 ? '2/1' : '1/1' }"
+        />
+      </div>
+      } }
+    </div>
+    }
+  </div>
+</article>

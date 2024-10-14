@@ -1,1 +1,3 @@
-<p>feed works!</p>
+@for (post of posts; track $index) {
+<app-post [post]="post" />
+}

@@ -32,6 +32,7 @@ export class PostFormComponent {
 
   postContent: string = '';
   uploadedImages: { file: File; url: string }[] = [];
+  errorMaxImages: boolean = false;
 
   post() {
     this.postFormService
@@ -43,6 +44,12 @@ export class PostFormComponent {
   }
 
   onImageUpload(event: Event) {
+    if (this.uploadedImages.length >= 4) {
+      this.errorMaxImages = true;
+      return;
+    }
+    this.errorMaxImages = false;
+
     const fileInput = event.target as HTMLInputElement;
     if (fileInput.files && fileInput.files.length > 0) {
       this.uploadedImages = [
@@ -56,6 +63,7 @@ export class PostFormComponent {
   }
 
   removeImage(index: number) {
+    this.errorMaxImages = false;
     URL.revokeObjectURL(this.uploadedImages[index].url);
     this.uploadedImages.splice(index, 1);
   }

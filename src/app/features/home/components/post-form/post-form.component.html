@@ -33,6 +33,11 @@
       </div>
       }
     </div>
+    @if (errorMaxImages) {
+    <small class="text-destructive text-sm"
+      >You can't upload more than 4 images</small
+    >
+    }
     <div class="flex justify-between items-center mt-2">
       <div class="flex gap-x-4">
         <hlm-tooltip>

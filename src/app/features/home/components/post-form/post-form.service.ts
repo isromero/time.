@@ -33,6 +33,7 @@ export class PostFormService {
       );
 
       const newPost: Post = {
+        authorId: currentUser.uid,
         postContent: postContent,
         imageUrls: [],
         createdAt: new Date(),

@@ -44,6 +44,9 @@
       ],
       "@spartan-ng/ui-label-helm": [
         "./libs/ui/ui-label-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-dialog-helm": [
+        "./libs/ui/ui-dialog-helm/src/index.ts"
       ]
     },
     "outDir": "./dist/out-tsc",
