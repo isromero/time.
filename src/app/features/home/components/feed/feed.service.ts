@@ -1,9 +1,14 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, collection, collectionData } from '@angular/fire/firestore';
+import {
+  Firestore,
+  collectionGroup,
+  onSnapshot,
+  orderBy,
+  query,
+} from '@angular/fire/firestore';
 import { Post } from '@shared/models/post.interface';
 import { Observable, catchError, from } from 'rxjs';
-import { User } from '@shared/models/user.interface';
-import { mergeAll, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -12,22 +17,31 @@ export class FeedService {
   private firestore: Firestore = inject(Firestore);
 
   getAllPosts(): Observable<Post[]> {
-    const usersCollectionRef = collection(this.firestore, 'users');
-    return collectionData(usersCollectionRef).pipe(
-      map((users: User[]) => users.map((user) => this.getUserPosts(user.uid))),
-      mergeAll(), // flatten the array of observables
-      mergeAll(), // flatten the array of posts
+    const postsQuery = query(
+      collectionGroup(this.firestore, 'posts'),
+      orderBy('createdAt', 'desc')
+    );
+
+    // Create an observable that emits an array of Post objects, this is needed because
+    // onSnapshot can't be used with from() directly, so we need to create a new observable
+    // to handle a real time observable.
+    return new Observable<Post[]>((observer) => {
+      const unsubscribe = onSnapshot(postsQuery, (snapshot) => {
+        const posts = snapshot.docs.map((doc) => {
+          return {
+            id: doc.id,
+            ...doc.data(),
+          } as Post;
+        });
+
+        observer.next(posts);
+      });
+
+      return unsubscribe;
+    }).pipe(
       catchError((error) => {
-        return from(Promise.reject(error));
+        return Promise.reject(error);
       })
     );
-  }
-
-  private getUserPosts(userId: string): Observable<Post[]> {
-    const userPostsCollectionRef = collection(
-      this.firestore,
-      `users/${userId}/posts`
-    );
-    return collectionData(userPostsCollectionRef) as Observable<Post[]>;
   }
 }

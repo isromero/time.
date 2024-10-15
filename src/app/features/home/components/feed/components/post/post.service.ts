@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore } from '@angular/fire/firestore';
+import { User } from '@angular/fire/auth';
+import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { Storage, ref, getDownloadURL } from '@angular/fire/storage';
-import { Observable, catchError, from } from 'rxjs';
+import { Observable, catchError, from, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -19,5 +20,22 @@ export class PostService {
     );
   }
 
-  /* getUsername(authorId: string): Observable<string> {} */
+  getUserInfo(userId: string): Observable<User> {
+    const userDoc = doc(this.firestore, 'users', userId);
+    return from(getDoc(userDoc)).pipe(
+      map((snapshot) => {
+        if (snapshot.exists()) {
+          return {
+            uid: snapshot.id,
+            ...snapshot.data(),
+          } as User;
+        } else {
+          throw new Error('User not found');
+        }
+      }),
+      catchError((error) => {
+        return from(Promise.reject(error));
+      })
+    );
+  }
 }

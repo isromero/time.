@@ -50,9 +50,11 @@ export class PostComponent implements OnInit {
   postService: PostService = inject(PostService);
 
   imageDownloadUrls$: Observable<(string | null)[]> = of([]);
+  userInfo$: Observable<any> = of(null);
 
   ngOnInit(): void {
     this.imageDownloadUrls$ = this.getImageDownloadUrls();
+    this.userInfo$ = this.postService.getUserInfo(this.post.authorId);
   }
 
   getGridClass(count: number): string {

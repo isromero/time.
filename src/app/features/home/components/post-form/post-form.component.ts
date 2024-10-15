@@ -33,14 +33,26 @@ export class PostFormComponent {
   postContent: string = '';
   uploadedImages: { file: File; url: string }[] = [];
   errorMaxImages: boolean = false;
+  isSubmitting: boolean = false;
 
   post() {
+    if (this.isSubmitting) {
+      return;
+    }
+    this.isSubmitting = true;
+
     this.postFormService
       .createPost(this.postContent, this.uploadedImages)
-      .subscribe();
-
-    this.postContent = '';
-    this.uploadedImages = [];
+      .subscribe({
+        next: () => {
+          this.resetForm();
+          this.isSubmitting = false;
+        },
+        error: (error) => {
+          console.error('Error creating post:', error);
+          this.isSubmitting = false;
+        },
+      });
   }
 
   onImageUpload(event: Event) {
@@ -66,5 +78,21 @@ export class PostFormComponent {
     this.errorMaxImages = false;
     URL.revokeObjectURL(this.uploadedImages[index].url);
     this.uploadedImages.splice(index, 1);
+  }
+
+  private resetForm() {
+    this.postContent = '';
+    this.cleanupImages();
+    this.uploadedImages = [];
+  }
+
+  private cleanupImages() {
+    for (const image of this.uploadedImages) {
+      URL.revokeObjectURL(image.url);
+    }
+  }
+
+  ngOnDestroy() {
+    this.cleanupImages();
   }
 }
