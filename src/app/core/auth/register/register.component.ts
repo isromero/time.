@@ -32,7 +32,6 @@ import { HlmLabelDirective } from '@spartan-ng/ui-label-helm';
     RouterLink,
   ],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.css',
 })
 export class RegisterComponent {
   private formBuilder: FormBuilder = inject(FormBuilder);

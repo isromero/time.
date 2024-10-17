@@ -24,6 +24,7 @@
     "@angular/router": "^18.2.0",
     "@angular/ssr": "^18.2.7",
     "@ng-icons/core": "^25.1.0",
+    "@ng-icons/ionicons": "^29.5.1",
     "@ng-icons/lucide": "^29.5.1",
     "@spartan-ng/ui-avatar-brain": "0.0.1-alpha.356",
     "@spartan-ng/ui-core": "^0.0.1-alpha.356",

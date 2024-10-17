@@ -10,6 +10,7 @@ import {
   from,
   map,
   of,
+  throwError,
 } from 'rxjs';
 import { Post } from '@shared/models/post.interface';
 
@@ -27,7 +28,7 @@ export class PostFormService {
   ): Observable<void> {
     if (!postContent && images.length === 0) {
       return from(
-        Promise.reject(new Error('Post content or images are required.'))
+        throwError(() => new Error('Post content or images must be provided.'))
       );
     }
 
@@ -44,24 +45,25 @@ export class PostFormService {
         authorId: currentUser.uid,
         postContent: postContent,
         imageUrls: [],
+        likes: 0,
         createdAt: new Date(),
       };
 
       const uploadImages$ =
         images.length > 0
-          ? this.uploadImages(newPost, images) // Subir imágenes si existen
-          : of(undefined); // Si no hay imágenes, emitir un observable vacío
+          ? this.uploadImages(newPost, images) // Upload images if there are any
+          : of(undefined); // If there are no images, return an observable that emits undefined (void)
 
-      // Nos aseguramos de que las imágenes se suben correctamente antes de agregar el post
+      // Upload images first, then add the post to the user's posts collection with the concatMap operator
       return uploadImages$.pipe(
         concatMap(() => from(addDoc(userPostsRef, newPost))),
         map(() => {}),
         catchError((error) => {
-          return from(Promise.reject(error));
+          return throwError(() => error);
         })
       );
     } else {
-      return from(Promise.reject(new Error('No user is currently logged in.')));
+      return from(throwError(() => new Error('User is not authenticated.')));
     }
   }
 
@@ -82,7 +84,7 @@ export class PostFormService {
     return forkJoin(uploadTasks).pipe(
       map(() => {}),
       catchError((error) => {
-        return from(Promise.reject(error));
+        return throwError(() => error);
       })
     );
   }

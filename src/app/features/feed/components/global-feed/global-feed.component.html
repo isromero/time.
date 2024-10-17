@@ -1,0 +1,3 @@
+@for (post of posts$ | async; track post.id) {
+<app-post [post]="post" />
+}

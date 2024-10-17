@@ -56,22 +56,20 @@
               (change)="onImageUpload($event)"
               #uploadImageInput
             />
-            <app-hlm-icon [config]="{ name: 'lucideImage', size: 'sm' }" />
+            <app-hlm-icon name="lucideImage" size="sm" />
           </button>
           <span *brnTooltipContent>Upload a image</span>
         </hlm-tooltip>
-        <hlm-tooltip>
+        <!-- <hlm-tooltip>
           <button
             type="button"
             hlmTooltipTrigger
             aria-describedby="Create a survey"
           >
-            <app-hlm-icon
-              [config]="{ name: 'lucideChartBarBig', size: 'sm' }"
-            />
+            <app-hlm-icon name="lucideChartBarBig" size="sm" />
           </button>
           <span *brnTooltipContent>Create a survey</span>
-        </hlm-tooltip>
+        </hlm-tooltip> -->
       </div>
       <div class="flex justify-end items-center text-xs text-gray-400">
         <span>{{ postContent.length }}</span>

@@ -7,8 +7,7 @@ import {
   query,
 } from '@angular/fire/firestore';
 import { Post } from '@shared/models/post.interface';
-import { Observable, catchError, from } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, catchError, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -40,7 +39,7 @@ export class FeedService {
       return unsubscribe;
     }).pipe(
       catchError((error) => {
-        return Promise.reject(error);
+        return throwError(() => error);
       })
     );
   }

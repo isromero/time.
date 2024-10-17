@@ -13,12 +13,8 @@ import {
   lucideImage,
   lucideChartBarBig,
 } from '@ng-icons/lucide';
+import { ionHeart, ionHeartOutline } from '@ng-icons/ionicons';
 import { HlmIconComponent } from '@spartan-ng/ui-icon-helm';
-
-interface IconConfig {
-  name: string;
-  size?: 'sm' | 'base' | 'lg' | 'xl';
-}
 
 @Component({
   selector: 'app-hlm-icon',
@@ -37,12 +33,14 @@ interface IconConfig {
       lucideEllipsis,
       lucideImage,
       lucideChartBarBig,
+      ionHeart,
+      ionHeartOutline,
     }),
   ],
-  template: `
-    <hlm-icon [size]="config.size || 'base'" [name]="config.name" />
-  `,
+  template: `<hlm-icon [size]="size" [name]="name" [color]="color" />`,
 })
 export class IconComponent {
-  @Input() config!: IconConfig;
+  @Input() size: 'sm' | 'base' | 'lg' | 'xl' = 'base';
+  @Input() name!: string;
+  @Input() color: string | undefined;
 }

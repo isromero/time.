@@ -7,7 +7,7 @@ import {
   HlmAvatarFallbackDirective,
 } from '@spartan-ng/ui-avatar-helm';
 import { PostService } from './post.service';
-import { Observable, catchError, combineLatest, of } from 'rxjs';
+import { Observable, catchError, forkJoin, of, throwError } from 'rxjs';
 
 import {
   BrnDialogContentDirective,
@@ -22,6 +22,8 @@ import {
   HlmDialogTitleDirective,
 } from '@spartan-ng/ui-dialog-helm';
 import { RelativeTimePipe } from '@shared/pipes/relative-time.pipe';
+import { IconComponent } from '@shared/components/ui/icon.component';
+import { AuthService } from '@core/auth/auth.service';
 
 @Component({
   selector: 'app-post',
@@ -40,17 +42,20 @@ import { RelativeTimePipe } from '@shared/pipes/relative-time.pipe';
     HlmDialogHeaderComponent,
     HlmDialogTitleDirective,
     RelativeTimePipe,
+    IconComponent,
   ],
   templateUrl: './post.component.html',
-  styleUrl: './post.component.css',
 })
 export class PostComponent implements OnInit {
   @Input() post!: Post;
 
   postService: PostService = inject(PostService);
+  authService: AuthService = inject(AuthService);
 
   imageDownloadUrls$: Observable<(string | null)[]> = of([]);
   userInfo$: Observable<any> = of(null);
+
+  liked: boolean = false;
 
   ngOnInit(): void {
     this.imageDownloadUrls$ = this.getImageDownloadUrls();
@@ -74,14 +79,41 @@ export class PostComponent implements OnInit {
 
   getImageDownloadUrls(): Observable<(string | null)[]> {
     if (this.post?.imageUrls && this.post.imageUrls.length > 0) {
-      const imageDownloadUrlObservables = this.post.imageUrls.map((imageRef) =>
-        this.postService
-          .getImageDownloadUrl(imageRef)
-          .pipe(catchError(() => of(null)))
+      return forkJoin(
+        this.post.imageUrls.map((imageRef) =>
+          this.postService.getImageDownloadUrl(imageRef).pipe(
+            catchError((error) => {
+              return throwError(() => error);
+            })
+          )
+        )
       );
-      return combineLatest(imageDownloadUrlObservables);
     } else {
       return of([]);
+    }
+  }
+
+  toggleLike(): void {
+    if (this.liked) {
+      this.liked = false;
+      this.post.likes--;
+      this.postService
+        .unlikePost(this.post, this.authService.currentUserSignal()!.uid)
+        .subscribe({
+          error: (error) => {
+            console.log('Error unliking the post:', error);
+          },
+        });
+    } else {
+      this.liked = true;
+      this.post.likes++;
+      this.postService
+        .likePost(this.post, this.authService.currentUserSignal()!.uid)
+        .subscribe({
+          error: (error) => {
+            console.log('Error liking the post:', error);
+          },
+        });
     }
   }
 }

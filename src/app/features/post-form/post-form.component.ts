@@ -25,7 +25,6 @@ import { PostFormService } from './post-form.service';
     HlmTooltipTriggerDirective,
   ],
   templateUrl: './post-form.component.html',
-  styleUrls: ['./post-form.component.css'],
 })
 export class PostFormComponent {
   postFormService: PostFormService = inject(PostFormService);
@@ -36,9 +35,7 @@ export class PostFormComponent {
   isSubmitting: boolean = false;
 
   post() {
-    if (this.isSubmitting) {
-      return;
-    }
+    if (this.isSubmitting) return;
     this.isSubmitting = true;
 
     this.postFormService
@@ -46,10 +43,11 @@ export class PostFormComponent {
       .subscribe({
         next: () => {
           this.resetForm();
-          this.isSubmitting = false;
         },
         error: (error) => {
-          console.error('Error creating post:', error);
+          console.error('Error creating post: ', error);
+        },
+        complete: () => {
           this.isSubmitting = false;
         },
       });

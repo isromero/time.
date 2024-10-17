@@ -1,6 +1,8 @@
 import { Injectable, inject, signal } from '@angular/core';
 import {
   Auth,
+  UserCredential,
+  UserInfo,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
@@ -10,7 +12,15 @@ import {
 import { doc, setDoc } from '@angular/fire/firestore';
 import { Firestore } from '@angular/fire/firestore';
 import { User } from '@shared/models/user.interface';
-import { Observable, from } from 'rxjs';
+import {
+  Observable,
+  catchError,
+  from,
+  map,
+  mergeMap,
+  switchMap,
+  throwError,
+} from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -26,55 +36,53 @@ export class AuthService {
     email: string,
     password: string
   ): Observable<void> {
-    const registerProcess = async (): Promise<void> => {
-      try {
-        const userCredential = await createUserWithEmailAndPassword(
-          this.firebaseAuth,
-          email,
-          password
-        );
-
+    return from(
+      createUserWithEmailAndPassword(this.firebaseAuth, email, password)
+    ).pipe(
+      switchMap((userCredential: UserCredential) => {
         const user = userCredential.user;
-
-        await updateProfile(user, { displayName: username });
-
-        // Reload to make sure user data exists
-        this.firebaseAuth.currentUser?.reload();
-
-        // Save the new user to Firestore
+        return from(updateProfile(user, { displayName: username })).pipe(
+          map(() => user)
+        );
+      }),
+      switchMap((user: UserInfo) => {
+        return from(
+          this.firebaseAuth.currentUser?.reload() ?? Promise.resolve()
+        ).pipe(map(() => user));
+      }),
+      mergeMap((user: UserInfo) => {
         const docRef = doc(this.firestore, 'users', user.uid);
-        setDoc(docRef, {
-          uid: user.uid,
-          email,
-          username: user.displayName,
-          createdAt: new Date(),
-        });
-      } catch (error) {
-        throw error;
-      }
-    };
-
-    // Convert the promise to an observable
-    return from(registerProcess());
+        return from(
+          setDoc(docRef, {
+            uid: user.uid,
+            email,
+            username: user.displayName,
+            createdAt: new Date(),
+          })
+        ).pipe(map(() => {}));
+      }),
+      catchError((error) => {
+        return throwError(() => error);
+      })
+    );
   }
 
   login(email: string, password: string): Observable<void> {
-    const loginProcess = async (): Promise<void> => {
-      try {
-        await signInWithEmailAndPassword(this.firebaseAuth, email, password);
-      } catch (error) {
-        throw error;
-      }
-    };
-
-    // Convert the promise to an observable
-    return from(loginProcess());
+    return from(
+      signInWithEmailAndPassword(this.firebaseAuth, email, password)
+    ).pipe(
+      map(() => {}),
+      catchError((error) => {
+        return throwError(() => error);
+      })
+    );
   }
 
   logout(): Observable<void> {
-    const promise = signOut(this.firebaseAuth);
-
-    // Convert the promise to an observable
-    return from(promise);
+    return from(signOut(this.firebaseAuth)).pipe(
+      catchError((error) => {
+        return throwError(() => error);
+      })
+    );
   }
 }

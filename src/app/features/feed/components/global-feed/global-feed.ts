@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FeedComponent } from './feed.component';
+import { FeedComponent } from './global-feed.component';
 
 describe('FeedComponent', () => {
   let component: FeedComponent;
@@ -8,9 +8,8 @@ describe('FeedComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FeedComponent]
-    })
-    .compileComponents();
+      imports: [FeedComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(FeedComponent);
     component = fixture.componentInstance;

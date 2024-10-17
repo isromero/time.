@@ -37,5 +37,38 @@
       } }
     </div>
     }
+    <div class="flex justify-between mt-2">
+      @if (liked) {
+      <button
+        (click)="toggleLike()"
+        class="text-sm flex items-center gap-x-1 text-destructive"
+      >
+        <app-hlm-icon name="ionHeart" size="sm" />
+        <span class="block mb-1">{{ post.likes }}</span>
+      </button>
+      } @else {
+      <button
+        (click)="toggleLike()"
+        class="text-sm text-muted-foreground flex items-center gap-x-1 hover:text-destructive"
+      >
+        <app-hlm-icon name="ionHeartOutline" size="sm" />
+        <span class="block mb-1">{{ post.likes }}</span>
+      </button>
+      }
+
+      <!--  <button
+      class="text-sm text-muted-foreground"
+      (click)="toggleComment(post.id)"
+    >
+      <span class="material-icons">chat_bubble</span>
+      <span>{{ post.comments.length }}</span>
+    </button> -->
+      <!-- <button
+      class="text-sm text-muted-foreground"
+      (click)="toggleShare(post.id)"
+    >
+      <span class="material-icons">share</span>
+    </button> -->
+    </div>
   </div>
 </article>

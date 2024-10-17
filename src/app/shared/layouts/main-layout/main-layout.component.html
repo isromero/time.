@@ -5,49 +5,49 @@
       <ul class="mt-4 text-xl flex flex-col gap-y-2">
         <a routerLink="/" routerLinkActive="active-route">
           <li class="flex items-center gap-x-2">
-            <app-hlm-icon [config]="{ name: 'lucideHouse' }" />
+            <app-hlm-icon name="lucideHouse" />
             <span>Home</span>
           </li>
         </a>
         <a routerLink="/habit-log" routerLinkActive="active-route">
           <li class="flex items-center gap-x-2">
-            <app-hlm-icon [config]="{ name: 'lucideLogs' }" />
+            <app-hlm-icon name="lucideLogs" />
             <span>Habit log</span>
           </li>
         </a>
         <a routerLink="/goals" routerLinkActive="active-route">
           <li class="flex items-center gap-x-2">
-            <app-hlm-icon [config]="{ name: 'lucideGoal' }" />
+            <app-hlm-icon name="lucideGoal" />
             <span>Goals</span>
           </li>
         </a>
         <a routerLink="/tasks" routerLinkActive="active-route">
           <li class="flex items-center gap-x-2">
-            <app-hlm-icon [config]="{ name: 'lucideListTodo' }" />
+            <app-hlm-icon name="lucideListTodo" />
             <span>Tasks</span>
           </li>
         </a>
         <a routerLink="/timer" routerLinkActive="active-route">
           <li class="flex items-center gap-x-2">
-            <app-hlm-icon [config]="{ name: 'lucideGoal' }" />
+            <app-hlm-icon name="lucideGoal" />
             <span>Timer</span>
           </li>
         </a>
         <a routerLink="/groups" routerLinkActive="active-route">
           <li class="flex items-center gap-x-2">
-            <app-hlm-icon [config]="{ name: 'lucideUsers' }" />
+            <app-hlm-icon name="lucideUsers" />
             <span>Groups</span>
           </li>
         </a>
         <a routerLink="/saved" routerLinkActive="active-route">
           <li class="flex items-center gap-x-2">
-            <app-hlm-icon [config]="{ name: 'lucideBookmark' }" />
+            <app-hlm-icon name="lucideBookmark" />
             <span>Saved</span>
           </li>
         </a>
         <a routerLink="/settings" routerLinkActive="active-route">
           <li class="flex items-center gap-x-2">
-            <app-hlm-icon [config]="{ name: 'lucideSettings2' }" />
+            <app-hlm-icon name="lucideSettings2" />
             <span>Settings</span>
           </li>
         </a>
@@ -98,7 +98,7 @@
           <span class="text-sm mb-1 text-left"
             >&#64;{{ authService.currentUserSignal()?.username }}</span
           >
-          <app-hlm-icon [config]="{ name: 'lucideEllipsis' }" />
+          <app-hlm-icon name="lucideEllipsis" />
         </button>
         <div hlmPopoverContent *brnPopoverContent class="rounded-full w-56">
           <button (click)="logout()" class="text-destructive">
