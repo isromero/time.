@@ -6,7 +6,6 @@ import {
   HlmAvatarImageDirective,
   HlmAvatarFallbackDirective,
 } from '@spartan-ng/ui-avatar-helm';
-import { PostService } from './post.service';
 import { Observable, catchError, forkJoin, of, throwError } from 'rxjs';
 
 import {
@@ -24,6 +23,9 @@ import {
 import { RelativeTimePipe } from '@shared/pipes/relative-time.pipe';
 import { IconComponent } from '@shared/components/ui/icon.component';
 import { AuthService } from '@core/auth/auth.service';
+import { PostsService } from '@core/services/posts/posts.service';
+import { PostService } from './post.service';
+import { UsersService } from '@core/services/users/users.service';
 
 @Component({
   selector: 'app-post',
@@ -49,17 +51,19 @@ import { AuthService } from '@core/auth/auth.service';
 export class PostComponent implements OnInit {
   @Input() post!: Post;
 
+  usersService: UsersService = inject(UsersService);
+  postsService: PostsService = inject(PostsService);
   postService: PostService = inject(PostService);
   authService: AuthService = inject(AuthService);
 
   imageDownloadUrls$: Observable<(string | null)[]> = of([]);
-  userInfo$: Observable<any> = of(null);
+  user$: Observable<any> = of(null);
 
   liked: boolean = false;
 
   ngOnInit(): void {
     this.imageDownloadUrls$ = this.getImageDownloadUrls();
-    this.userInfo$ = this.postService.getUserInfo(this.post.authorId);
+    this.user$ = this.usersService.getUser(this.post.authorId);
   }
 
   getGridClass(count: number): string {
@@ -81,11 +85,7 @@ export class PostComponent implements OnInit {
     if (this.post?.imageUrls && this.post.imageUrls.length > 0) {
       return forkJoin(
         this.post.imageUrls.map((imageRef) =>
-          this.postService.getImageDownloadUrl(imageRef).pipe(
-            catchError((error) => {
-              return throwError(() => error);
-            })
-          )
+          this.postService.getImageDownloadUrl(imageRef)
         )
       );
     } else {
@@ -97,7 +97,7 @@ export class PostComponent implements OnInit {
     if (this.liked) {
       this.liked = false;
       this.post.likes--;
-      this.postService
+      this.postsService
         .unlikePost(this.post, this.authService.currentUserSignal()!.uid)
         .subscribe({
           error: (error) => {
@@ -107,7 +107,7 @@ export class PostComponent implements OnInit {
     } else {
       this.liked = true;
       this.post.likes++;
-      this.postService
+      this.postsService
         .likePost(this.post, this.authService.currentUserSignal()!.uid)
         .subscribe({
           error: (error) => {
