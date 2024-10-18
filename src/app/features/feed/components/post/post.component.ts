@@ -1,4 +1,11 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  WritableSignal,
+  inject,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Post } from '@shared/models/post.interface';
 import {
@@ -6,7 +13,7 @@ import {
   HlmAvatarImageDirective,
   HlmAvatarFallbackDirective,
 } from '@spartan-ng/ui-avatar-helm';
-import { Observable, catchError, forkJoin, of, throwError } from 'rxjs';
+import { Observable, forkJoin, of } from 'rxjs';
 
 import {
   BrnDialogContentDirective,
@@ -26,6 +33,7 @@ import { AuthService } from '@core/auth/auth.service';
 import { PostsService } from '@core/services/posts/posts.service';
 import { PostService } from './post.service';
 import { UsersService } from '@core/services/users/users.service';
+import { User } from '@shared/models/user.interface';
 
 @Component({
   selector: 'app-post',
@@ -49,7 +57,7 @@ import { UsersService } from '@core/services/users/users.service';
   templateUrl: './post.component.html',
 })
 export class PostComponent implements OnInit {
-  @Input() post!: Post;
+  @Input({ required: true }) post!: Post;
 
   usersService: UsersService = inject(UsersService);
   postsService: PostsService = inject(PostsService);
@@ -57,11 +65,24 @@ export class PostComponent implements OnInit {
   authService: AuthService = inject(AuthService);
 
   imageDownloadUrls$: Observable<(string | null)[]> = of([]);
-  user$: Observable<any> = of(null);
-
-  liked: boolean = false;
+  user$: Observable<User> = of();
+  isLiked: boolean = false;
+  isLikeLoading: boolean = true;
 
   ngOnInit(): void {
+    this.postsService
+      .isPostLiked(this.post, this.authService.currentUserSignal()!.uid)
+      .subscribe({
+        next: (liked) => {
+          this.isLiked = liked;
+        },
+        error: (error) => {
+          console.log('Error getting the like status:', error);
+        },
+        complete: () => {
+          this.isLikeLoading = false;
+        },
+      });
     this.imageDownloadUrls$ = this.getImageDownloadUrls();
     this.user$ = this.usersService.getUser(this.post.authorId);
   }
@@ -94,26 +115,36 @@ export class PostComponent implements OnInit {
   }
 
   toggleLike(): void {
-    if (this.liked) {
-      this.liked = false;
+    if (this.isLikeLoading) return;
+    this.isLikeLoading = true;
+
+    const currentUserId = this.authService.currentUserSignal()!.uid;
+
+    if (this.isLiked) {
+      this.isLiked = false;
       this.post.likes--;
-      this.postsService
-        .unlikePost(this.post, this.authService.currentUserSignal()!.uid)
-        .subscribe({
-          error: (error) => {
-            console.log('Error unliking the post:', error);
-          },
-        });
+      this.postsService.unlikePost(this.post, currentUserId).subscribe({
+        error: (error) => {
+          console.log('Error unliking the post:', error);
+          this.isLiked = true;
+          this.post.likes++;
+        },
+        complete: () => {
+          this.isLikeLoading = false;
+        },
+      });
     } else {
-      this.liked = true;
+      this.isLiked = true;
       this.post.likes++;
-      this.postsService
-        .likePost(this.post, this.authService.currentUserSignal()!.uid)
-        .subscribe({
-          error: (error) => {
-            console.log('Error liking the post:', error);
-          },
-        });
+      this.postsService.likePost(this.post, currentUserId).subscribe({
+        error: (error) => {
+          this.isLiked = false;
+          this.post.likes--;
+        },
+        complete: () => {
+          this.isLikeLoading = false;
+        },
+      });
     }
   }
 }

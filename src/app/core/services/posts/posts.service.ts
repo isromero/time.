@@ -6,6 +6,7 @@ import {
   collectionGroup,
   deleteDoc,
   doc,
+  getDocs,
   increment,
   onSnapshot,
   orderBy,
@@ -70,17 +71,26 @@ export class PostsService {
     );
 
     return from(
-      updateDoc(postDoc, {
-        likes: increment(1),
-      })
+      getDocs(query(userLikedPostsCollection, where('postId', '==', post.id)))
     ).pipe(
-      switchMap(() =>
-        addDoc(userLikedPostsCollection, {
-          postRef: postDoc,
-          createdAt: new Date(),
-        })
-      ),
-      map(() => {})
+      switchMap((snapshot) => {
+        if (snapshot.docs.length === 0) {
+          return from(updateDoc(postDoc, { likes: increment(1) })).pipe(
+            switchMap(() =>
+              addDoc(userLikedPostsCollection, {
+                postId: post.id,
+                createdAt: new Date(),
+              })
+            )
+          );
+        } else {
+          return of(undefined);
+        }
+      }),
+      map(() => {}),
+      catchError((error) => {
+        return throwError(() => error);
+      })
     );
   }
 
@@ -94,25 +104,54 @@ export class PostsService {
       `users/${userId}/likedPosts`
     );
 
-    // TODO: Implement the deleteDoc successfully, query have to be changed
     return from(
-      updateDoc(postDoc, {
-        likes: increment(-1),
-      })
+      getDocs(query(likedPostsCollection, where('postId', '==', post.id)))
     ).pipe(
-      switchMap(() =>
-        query(likedPostsCollection, where('postRef', '==', postDoc))
-      ),
-      switchMap((querySnapshot) => {
-        const likedPostDoc = querySnapshot.docs[0];
-
-        if (likedPostDoc) {
-          return deleteDoc(likedPostDoc.ref);
+      switchMap((snapshot) => {
+        if (snapshot.docs.length) {
+          return deleteDoc(snapshot.docs[0].ref);
         } else {
-          return of(null);
+          return of(undefined);
         }
       }),
-      map(() => {})
+      switchMap(() => {
+        return from(
+          updateDoc(postDoc, {
+            likes: increment(-1),
+          })
+        );
+      }),
+      catchError((error) => {
+        return throwError(() => error);
+      })
+    );
+  }
+
+  deletePost(post: Post): Observable<void> {
+    const postDoc = doc(
+      this.firestore,
+      `users/${post.authorId}/posts/${post.id}`
+    );
+
+    return from(deleteDoc(postDoc)).pipe(
+      catchError((error) => {
+        return throwError(() => error);
+      })
+    );
+  }
+
+  isPostLiked(post: Post, userId: string): Observable<boolean> {
+    const likedPostsCollection = collection(
+      this.firestore,
+      `users/${userId}/likedPosts`
+    );
+
+    return from(
+      getDocs(query(likedPostsCollection, where('postId', '==', post.id)))
+    ).pipe(
+      map((snapshot) => {
+        return snapshot.docs.length > 0;
+      })
     );
   }
 }

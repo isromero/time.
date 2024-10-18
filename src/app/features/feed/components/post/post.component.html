@@ -38,23 +38,24 @@
     </div>
     }
     <div class="flex justify-between mt-2">
-      @if (liked) {
-      <button
-        (click)="toggleLike()"
-        class="text-sm flex items-center gap-x-1 text-destructive"
-      >
-        <app-hlm-icon name="ionHeart" size="sm" />
-        <span class="block mb-1">{{ post.likes }}</span>
-      </button>
-      } @else {
-      <button
-        (click)="toggleLike()"
-        class="text-sm text-muted-foreground flex items-center gap-x-1 hover:text-destructive"
-      >
-        <app-hlm-icon name="ionHeartOutline" size="sm" />
-        <span class="block mb-1">{{ post.likes }}</span>
-      </button>
-      }
+      <div class="flex justify-between mt-2">
+        <button
+          (click)="toggleLike()"
+          [disabled]="isLikeLoading"
+          class="text-sm flex items-center gap-x-1"
+          [ngClass]="
+            isLiked
+              ? 'text-destructive'
+              : 'text-muted-foreground hover:text-destructive'
+          "
+        >
+          <app-hlm-icon
+            [name]="isLiked ? 'ionHeart' : 'ionHeartOutline'"
+            size="sm"
+          />
+          <span class="block mb-1">{{ post.likes }}</span>
+        </button>
+      </div>
 
       <!--  <button
       class="text-sm text-muted-foreground"
