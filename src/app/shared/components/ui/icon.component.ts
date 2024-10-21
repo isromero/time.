@@ -12,6 +12,7 @@ import {
   lucideEllipsis,
   lucideImage,
   lucideChartBarBig,
+  lucideMessageCircle,
 } from '@ng-icons/lucide';
 import { ionHeart, ionHeartOutline } from '@ng-icons/ionicons';
 import { HlmIconComponent } from '@spartan-ng/ui-icon-helm';
@@ -35,6 +36,7 @@ import { HlmIconComponent } from '@spartan-ng/ui-icon-helm';
       lucideChartBarBig,
       ionHeart,
       ionHeartOutline,
+      lucideMessageCircle,
     }),
   ],
   template: `<hlm-icon [size]="size" [name]="name" [color]="color" />`,

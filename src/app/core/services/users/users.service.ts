@@ -22,9 +22,7 @@ export class UsersService {
           throw new Error('User not found');
         }
       }),
-      catchError((error) => {
-        return throwError(() => error);
-      })
+      catchError((error) => throwError(() => error))
     );
   }
 }

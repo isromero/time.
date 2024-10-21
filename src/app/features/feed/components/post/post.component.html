@@ -37,25 +37,43 @@
       } }
     </div>
     }
-    <div class="flex justify-between mt-2">
-      <div class="flex justify-between mt-2">
+    <div class="flex gap-x-4 mt-2">
+      <button
+        (click)="toggleLike()"
+        [disabled]="isLikeLoading"
+        class="text-sm flex items-center gap-x-1"
+        [ngClass]="
+          isLiked
+            ? 'text-destructive hover:text-muted-foreground'
+            : 'hover:text-destructive'
+        "
+      >
+        <app-hlm-icon
+          [name]="isLiked ? 'ionHeart' : 'ionHeartOutline'"
+          size="sm"
+        />
+        <span class="block mb-1">{{ post.likes }}</span>
+      </button>
+      <hlm-dialog [state]="commentDialogState()" (close)="closeCommentDialog()">
         <button
-          (click)="toggleLike()"
-          [disabled]="isLikeLoading"
-          class="text-sm flex items-center gap-x-1"
-          [ngClass]="
-            isLiked
-              ? 'text-destructive'
-              : 'text-muted-foreground hover:text-destructive'
-          "
+          brnDialogTrigger
+          (click)="openCommentDialog()"
+          class="text-sm flex items-center gap-x-1 hover:text-muted-foreground"
         >
-          <app-hlm-icon
-            [name]="isLiked ? 'ionHeart' : 'ionHeartOutline'"
-            size="sm"
-          />
-          <span class="block mb-1">{{ post.likes }}</span>
+          <app-hlm-icon name="lucideMessageCircle" size="sm" />
+          <span class="block mb-1">{{ post.comments }}</span>
         </button>
-      </div>
+        <hlm-dialog-content
+          class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[5rem] max-w-[50%]"
+          *brnDialogContent="let ctx"
+        >
+          <span>Responding to &#64;{{ (user$ | async)?.username }}</span>
+          <app-comment-form
+            [post]="post"
+            (closeDialog)="closeCommentDialog()"
+          />
+        </hlm-dialog-content>
+      </hlm-dialog>
 
       <!--  <button
       class="text-sm text-muted-foreground"

@@ -1,11 +1,4 @@
-import {
-  Component,
-  Input,
-  OnInit,
-  WritableSignal,
-  inject,
-  signal,
-} from '@angular/core';
+import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Post } from '@shared/models/post.interface';
 import {
@@ -34,6 +27,7 @@ import { PostsService } from '@core/services/posts/posts.service';
 import { PostService } from './post.service';
 import { UsersService } from '@core/services/users/users.service';
 import { User } from '@shared/models/user.interface';
+import { CommentFormComponent } from '@features/comment-form/comment-form.component';
 
 @Component({
   selector: 'app-post',
@@ -53,6 +47,7 @@ import { User } from '@shared/models/user.interface';
     HlmDialogTitleDirective,
     RelativeTimePipe,
     IconComponent,
+    CommentFormComponent,
   ],
   templateUrl: './post.component.html',
 })
@@ -68,6 +63,7 @@ export class PostComponent implements OnInit {
   user$: Observable<User> = of();
   isLiked: boolean = false;
   isLikeLoading: boolean = true;
+  commentDialogState = signal<'open' | 'closed'>('closed');
 
   ngOnInit(): void {
     this.postsService
@@ -146,5 +142,13 @@ export class PostComponent implements OnInit {
         },
       });
     }
+  }
+
+  openCommentDialog(): void {
+    this.commentDialogState.set('open');
+  }
+
+  closeCommentDialog(): void {
+    this.commentDialogState.set('closed');
   }
 }

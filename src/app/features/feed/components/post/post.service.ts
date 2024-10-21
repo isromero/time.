@@ -11,9 +11,7 @@ export class PostService {
   getImageDownloadUrl(imageRef: string): Observable<string> {
     const postImageRef = ref(this.storage, imageRef);
     return from(getDownloadURL(postImageRef)).pipe(
-      catchError((error) => {
-        return throwError(() => error);
-      })
+      catchError((error) => throwError(() => error))
     );
   }
 }

@@ -4,5 +4,6 @@ export interface Post {
   postContent: string;
   imageUrls?: string[];
   likes: number;
+  comments: number;
   createdAt: Date;
 }

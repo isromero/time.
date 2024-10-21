@@ -1,5 +1,12 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, addDoc, collection } from '@angular/fire/firestore';
+import {
+  Firestore,
+  addDoc,
+  collection,
+  doc,
+  increment,
+  updateDoc,
+} from '@angular/fire/firestore';
 import { Storage, ref, uploadBytes } from '@angular/fire/storage';
 import { AuthService } from '@core/auth/auth.service';
 import {
@@ -10,6 +17,7 @@ import {
   from,
   map,
   of,
+  switchMap,
   throwError,
 } from 'rxjs';
 import { Post } from '@shared/models/post.interface';
@@ -17,16 +25,17 @@ import { Post } from '@shared/models/post.interface';
 @Injectable({
   providedIn: 'root',
 })
-export class PostFormService {
+export class CommentFormService {
   private firestore: Firestore = inject(Firestore);
   private storage: Storage = inject(Storage);
   private authService: AuthService = inject(AuthService);
 
-  createPost(
-    postContent: string,
+  createComment(
+    post: Post,
+    commentContent: string,
     images: { file: File; url: string }[] = []
   ): Observable<void> {
-    if (!postContent && images.length === 0) {
+    if (!commentContent && images.length === 0) {
       return from(
         throwError(() => new Error('Post content or images must be provided.'))
       );
@@ -34,16 +43,18 @@ export class PostFormService {
 
     const currentUser = this.authService.currentUserSignal();
     if (currentUser) {
+      const userPostDoc = doc(
+        this.firestore,
+        `users/${currentUser.uid}/posts/${post.id}`
+      );
       const userPostsRef = collection(
         this.firestore,
-        'users',
-        currentUser.uid,
-        'posts'
+        `users/${currentUser.uid}/posts/${post.id}/comments`
       );
 
       const newPost: Post = {
         authorId: currentUser.uid,
-        postContent: postContent,
+        postContent: commentContent,
         imageUrls: [],
         likes: 0,
         comments: 0,
@@ -51,14 +62,13 @@ export class PostFormService {
       };
 
       const uploadImages$ =
-        images.length > 0
-          ? this.uploadImages(newPost, images) // Upload images if there are any
-          : of(undefined); // If there are no images, return an observable that emits undefined (void)
+        images.length > 0 ? this.uploadImages(newPost, images) : of(undefined);
 
-      // Upload images first, then add the post to the user's posts collection with the concatMap operator
       return uploadImages$.pipe(
         concatMap(() => from(addDoc(userPostsRef, newPost))),
-        map(() => {}),
+        switchMap(() =>
+          from(updateDoc(userPostDoc, { comments: increment(1) }))
+        ),
         catchError((error) => throwError(() => error))
       );
     } else {

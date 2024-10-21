@@ -61,9 +61,7 @@ export class AuthService {
           })
         ).pipe(map(() => {}));
       }),
-      catchError((error) => {
-        return throwError(() => error);
-      })
+      catchError((error) => throwError(() => error))
     );
   }
 
@@ -72,17 +70,13 @@ export class AuthService {
       signInWithEmailAndPassword(this.firebaseAuth, email, password)
     ).pipe(
       map(() => {}),
-      catchError((error) => {
-        return throwError(() => error);
-      })
+      catchError((error) => throwError(() => error))
     );
   }
 
   logout(): Observable<void> {
     return from(signOut(this.firebaseAuth)).pipe(
-      catchError((error) => {
-        return throwError(() => error);
-      })
+      catchError((error) => throwError(() => error))
     );
   }
 }

@@ -53,11 +53,7 @@ export class PostsService {
       });
 
       return unsubscribe;
-    }).pipe(
-      catchError((error) => {
-        return throwError(() => error);
-      })
-    );
+    }).pipe(catchError((error) => throwError(() => error)));
   }
 
   likePost(post: Post, userId: string): Observable<void> {
@@ -88,9 +84,7 @@ export class PostsService {
         }
       }),
       map(() => {}),
-      catchError((error) => {
-        return throwError(() => error);
-      })
+      catchError((error) => throwError(() => error))
     );
   }
 
@@ -121,9 +115,7 @@ export class PostsService {
           })
         );
       }),
-      catchError((error) => {
-        return throwError(() => error);
-      })
+      catchError((error) => throwError(() => error))
     );
   }
 
@@ -134,9 +126,7 @@ export class PostsService {
     );
 
     return from(deleteDoc(postDoc)).pipe(
-      catchError((error) => {
-        return throwError(() => error);
-      })
+      catchError((error) => throwError(() => error))
     );
   }
 
