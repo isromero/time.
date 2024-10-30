@@ -6,7 +6,7 @@ import {
   HlmAvatarImageDirective,
   HlmAvatarFallbackDirective,
 } from '@spartan-ng/ui-avatar-helm';
-import { Observable, forkJoin, of } from 'rxjs';
+import {Observable, forkJoin, of, from, map} from 'rxjs';
 
 import {
   BrnDialogContentDirective,
@@ -28,6 +28,7 @@ import { PostService } from './post.service';
 import { UsersService } from '@core/services/users/users.service';
 import { User } from '@shared/models/user.interface';
 import { CommentFormComponent } from '@features/comment-form/comment-form.component';
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-post',
@@ -53,7 +54,10 @@ import { CommentFormComponent } from '@features/comment-form/comment-form.compon
 })
 export class PostComponent implements OnInit {
   @Input({ required: true }) post!: Post;
+  @Input() isDetail: boolean = false;
 
+  route: ActivatedRoute = inject(ActivatedRoute);
+  router: Router = inject(Router);
   usersService: UsersService = inject(UsersService);
   postsService: PostsService = inject(PostsService);
   postService: PostService = inject(PostService);
@@ -133,7 +137,7 @@ export class PostComponent implements OnInit {
       this.isLiked = true;
       this.post.likes++;
       this.postsService.likePost(this.post, currentUserId).subscribe({
-        error: (error) => {
+        error: () => {
           this.isLiked = false;
           this.post.likes--;
         },
@@ -150,5 +154,11 @@ export class PostComponent implements OnInit {
 
   closeCommentDialog(): void {
     this.commentDialogState.set('closed');
+  }
+
+  navigateToPostDetail(): Observable<void> {
+    return from(this.router.navigate(['posts', this.post.authorId, this.post.id], { relativeTo: this.route })).pipe(
+      map(() => {}),
+    )
   }
 }

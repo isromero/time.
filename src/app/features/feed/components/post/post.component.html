@@ -1,9 +1,10 @@
-<article class="border-b border-gray-400 py-4">
+<article [class]="isDetail ? 'border-b border-gray-400 py-4' : 'border-b border-gray-400 py-4 cursor-pointer'"
+         (click)="!isDetail && navigateToPostDetail()">
   <div class="flex gap-x-2 items-center">
     <hlm-avatar>
       <img
         src="/assets/avatar.png"
-        alt="spartan logo. Resembling a spartanic shield"
+        alt="Avatar"
         hlmAvatarImage
       />
       <span class="text-white bg-destructive" hlmAvatarFallback>NOMBRE</span>
@@ -30,6 +31,7 @@
       >
         <img
           [src]="imageUrl"
+          [alt]="post.postContent"
           class="w-full h-full object-cover rounded-lg"
           [ngStyle]="{ 'aspect-ratio': imageUrls.length === 1 ? '2/1' : '1/1' }"
         />
@@ -74,20 +76,6 @@
           />
         </hlm-dialog-content>
       </hlm-dialog>
-
-      <!--  <button
-      class="text-sm text-muted-foreground"
-      (click)="toggleComment(post.id)"
-    >
-      <span class="material-icons">chat_bubble</span>
-      <span>{{ post.comments.length }}</span>
-    </button> -->
-      <!-- <button
-      class="text-sm text-muted-foreground"
-      (click)="toggleShare(post.id)"
-    >
-      <span class="material-icons">share</span>
-    </button> -->
     </div>
   </div>
 </article>

@@ -1,29 +1,7 @@
-import { Injectable, inject } from '@angular/core';
-import {
-  Firestore,
-  addDoc,
-  collection,
-  collectionGroup,
-  deleteDoc,
-  doc,
-  getDocs,
-  increment,
-  onSnapshot,
-  orderBy,
-  query,
-  updateDoc,
-  where,
-} from '@angular/fire/firestore';
-import { Post } from '@shared/models/post.interface';
-import {
-  Observable,
-  catchError,
-  from,
-  map,
-  of,
-  switchMap,
-  throwError,
-} from 'rxjs';
+import {inject, Injectable} from '@angular/core';
+import {addDoc, collection, collectionGroup, deleteDoc, doc, Firestore, getDocs, increment, onSnapshot, orderBy, query, updateDoc, where,} from '@angular/fire/firestore';
+import {Post} from '@shared/models/post.interface';
+import {catchError, from, map, Observable, of, switchMap, throwError,} from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -41,7 +19,7 @@ export class PostsService {
     // onSnapshot can't be used with from() directly, so we need to create a new observable
     // to handle a real time observable.
     return new Observable<Post[]>((observer) => {
-      const unsubscribe = onSnapshot(postsQuery, (snapshot) => {
+      return onSnapshot(postsQuery, (snapshot) => {
         const posts = snapshot.docs.map((doc) => {
           return {
             id: doc.id,
@@ -51,8 +29,19 @@ export class PostsService {
 
         observer.next(posts);
       });
+    }).pipe(catchError((error) => throwError(() => error)));
+  }
 
-      return unsubscribe;
+  getPost(postId: string, userId: string): Observable<Post> {
+    const postDoc = doc(this.firestore, `users/${userId}/posts/${postId}`);
+
+    return new Observable<Post>((observer) => {
+      return onSnapshot(postDoc, (snapshot) => {
+        observer.next({
+          id: snapshot.id,
+          ...snapshot.data(),
+        } as Post);
+      });
     }).pipe(catchError((error) => throwError(() => error)));
   }
 

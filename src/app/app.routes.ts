@@ -36,6 +36,10 @@ export const routes: Routes = [
         component: HomeComponent,
         title: 'Home | time.',
       },
+      {
+        path: 'posts/:authorId/:postId',
+        loadComponent: () => import('./features/feed/components/post/post-detail/post-detail.component').then((m) => m.PostDetailComponent),
+      },
       { path: 'home', redirectTo: '' },
       { path: '**', redirectTo: '' },
     ],

@@ -26,7 +26,7 @@ export class RelativeTimePipe implements PipeTransform, OnDestroy {
   private changeDetectorRef = inject(ChangeDetectorRef);
   private ngZone = inject(NgZone);
 
-  transform(value: FirestoreTimestamp | Date | string | null): string {
+  transform(value: FirestoreTimestamp | Date | string | null | undefined): string {
     if (value === null || value === undefined) {
       this.removeTimer();
       return '';
@@ -67,11 +67,8 @@ export class RelativeTimePipe implements PipeTransform, OnDestroy {
     if (value instanceof Date) {
       return value.getTime();
     }
-    if (typeof value === 'string') {
-      const parsedDate = new Date(value);
-      return isNaN(parsedDate.getTime()) ? null : parsedDate.getTime();
-    }
-    return null;
+    const parsedDate = new Date(value);
+    return isNaN(parsedDate.getTime()) ? null : parsedDate.getTime();
   }
 
   private isFirestoreTimestamp(value: any): value is FirestoreTimestamp {
@@ -86,7 +83,7 @@ export class RelativeTimePipe implements PipeTransform, OnDestroy {
       const diffInSeconds = (now - timestamp) / 1000;
 
       if (!isFinite(diffInSeconds)) {
-        throw new Error('Invalid time difference');
+        return 'Unknown time';
       }
 
       const abs = Math.abs(diffInSeconds);
