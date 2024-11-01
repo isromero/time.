@@ -34,7 +34,7 @@ export class PostFormComponent {
   errorMaxImages: boolean = false;
   isSubmitting: boolean = false;
 
-  post() {
+  createPost() {
     if (this.isSubmitting) return;
     this.isSubmitting = true;
 

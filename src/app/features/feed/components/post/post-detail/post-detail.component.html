@@ -1,0 +1,11 @@
+<div class="flex items-center">
+  <app-hlm-icon name="lucideArrowLeft" size="sm" class="cursor-pointer" (click)="navigateBack()" />
+  <span class="mb-1 ml-2">Go back</span>
+</div>
+@if (post) {
+<app-post [post]="post" [isDetail]="true" />
+}
+<span class="block font-bold my-4">Comentarios</span>
+@for (postComment of postComments$ | async; track postComment) {
+  <app-post [post]="postComment" />
+}

@@ -6,4 +6,5 @@ export interface Post {
   likes: number;
   comments: number;
   createdAt: Date;
+  isComment: boolean;
 }

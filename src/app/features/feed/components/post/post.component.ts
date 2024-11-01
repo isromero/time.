@@ -157,7 +157,7 @@ export class PostComponent implements OnInit {
   }
 
   navigateToPostDetail(): Observable<void> {
-    return from(this.router.navigate(['posts', this.post.authorId, this.post.id], { relativeTo: this.route })).pipe(
+    return from(this.router.navigate(['posts', this.post.authorId, this.post.id])).pipe(
       map(() => {}),
     )
   }

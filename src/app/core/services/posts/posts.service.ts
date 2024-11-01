@@ -1,7 +1,31 @@
-import {inject, Injectable} from '@angular/core';
-import {addDoc, collection, collectionGroup, deleteDoc, doc, Firestore, getDocs, increment, onSnapshot, orderBy, query, updateDoc, where,} from '@angular/fire/firestore';
-import {Post} from '@shared/models/post.interface';
-import {catchError, from, map, Observable, of, switchMap, throwError,} from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import {
+  addDoc,
+  collection,
+  collectionGroup,
+  deleteDoc,
+  doc,
+  Firestore,
+  getDocs,
+  increment,
+  onSnapshot,
+  orderBy,
+  query,
+  updateDoc,
+  where,
+} from '@angular/fire/firestore';
+import { Post } from '@shared/models/post.interface';
+import {
+  catchError,
+  combineLatest,
+  from,
+  map,
+  Observable,
+  of,
+  shareReplay,
+  switchMap,
+  throwError,
+} from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +36,7 @@ export class PostsService {
   getPosts(): Observable<Post[]> {
     const postsQuery = query(
       collectionGroup(this.firestore, 'posts'),
+      where('isComment', '==', false),
       orderBy('createdAt', 'desc')
     );
 
@@ -131,6 +156,29 @@ export class PostsService {
       map((snapshot) => {
         return snapshot.docs.length > 0;
       })
+    );
+  }
+
+  getPostComments(postId: string, userId: string): Observable<Post[]> {
+    const postCommentsQuery = query(
+      collection(this.firestore, `users/${userId}/posts/${postId}/comments`),
+      orderBy('createdAt', 'desc')
+    );
+
+    return new Observable<string[]>((observer) => {
+      return onSnapshot(postCommentsQuery, (snapshot) => {
+        const commentIds = snapshot.docs.map((doc) => doc.data()['postId']);
+        observer.next(commentIds);
+      });
+    }).pipe(
+      switchMap((commentIds) =>
+        commentIds.length === 0
+          ? of([])
+          : combineLatest(
+              commentIds.map((commentId) => this.getPost(commentId, userId))
+            )
+      ),
+      catchError((error) => throwError(() => error))
     );
   }
 }

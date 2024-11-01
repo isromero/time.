@@ -48,6 +48,7 @@ export class PostFormService {
         likes: 0,
         comments: 0,
         createdAt: new Date(),
+        isComment: false,
       };
 
       const uploadImages$ =
@@ -66,7 +67,7 @@ export class PostFormService {
     }
   }
 
-  private uploadImages(
+  uploadImages(
     newPost: Post,
     images: { file: File; url: string }[]
   ): Observable<void> {
