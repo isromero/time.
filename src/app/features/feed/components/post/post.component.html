@@ -1,12 +1,14 @@
-<article [class]="isDetail ? 'border-b border-gray-400 py-4' : 'border-b border-gray-400 py-4 cursor-pointer'"
-         (click)="!isDetail && navigateToPostDetail()">
+<article
+  [class]="
+    isDetail
+      ? 'border-b border-gray-400 py-4'
+      : 'border-b border-gray-400 py-4 cursor-pointer'
+  "
+  (click)="!isDetail && navigateToPostDetail($event)"
+>
   <div class="flex gap-x-2 items-center">
     <hlm-avatar>
-      <img
-        src="/assets/avatar.png"
-        alt="Avatar"
-        hlmAvatarImage
-      />
+      <img src="/assets/avatar.png" alt="Avatar" hlmAvatarImage />
       <span class="text-white bg-destructive" hlmAvatarFallback>NOMBRE</span>
     </hlm-avatar>
     <span class="text-sm mb-1 text-left block"
@@ -39,7 +41,7 @@
       } }
     </div>
     }
-    <div class="flex gap-x-4 mt-2">
+    <div class="actions flex gap-x-4 mt-2">
       <button
         (click)="toggleLike()"
         [disabled]="isLikeLoading"
@@ -59,7 +61,7 @@
       <hlm-dialog [state]="commentDialogState()" (close)="closeCommentDialog()">
         <button
           brnDialogTrigger
-          (click)="openCommentDialog()"
+          (click)="openCommentDialog($event)"
           class="text-sm flex items-center gap-x-1 hover:text-muted-foreground"
         >
           <app-hlm-icon name="lucideMessageCircle" size="sm" />

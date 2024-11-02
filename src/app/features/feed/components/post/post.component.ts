@@ -148,7 +148,8 @@ export class PostComponent implements OnInit {
     }
   }
 
-  openCommentDialog(): void {
+  openCommentDialog(event: MouseEvent): void {
+    (event as PointerEvent).stopPropagation();
     this.commentDialogState.set('open');
   }
 
@@ -156,7 +157,10 @@ export class PostComponent implements OnInit {
     this.commentDialogState.set('closed');
   }
 
-  navigateToPostDetail(): Observable<void> {
+  navigateToPostDetail(event: Event): Observable<void> {
+    if (event.target && (event.target as HTMLElement).closest('.actions')) {
+      return of();
+    }
     return from(
       this.router.navigate(['posts', this.post.authorId, this.post.id])
     ).pipe(map(() => {}));
