@@ -6,7 +6,7 @@ import {
   HlmAvatarImageDirective,
   HlmAvatarFallbackDirective,
 } from '@spartan-ng/ui-avatar-helm';
-import {Observable, forkJoin, of, from, map} from 'rxjs';
+import { Observable, forkJoin, of, from, map } from 'rxjs';
 
 import {
   BrnDialogContentDirective,
@@ -28,7 +28,7 @@ import { PostService } from './post.service';
 import { UsersService } from '@core/services/users/users.service';
 import { User } from '@shared/models/user.interface';
 import { CommentFormComponent } from '@features/comment-form/comment-form.component';
-import {ActivatedRoute, Router} from "@angular/router";
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-post',
@@ -157,8 +157,8 @@ export class PostComponent implements OnInit {
   }
 
   navigateToPostDetail(): Observable<void> {
-    return from(this.router.navigate(['posts', this.post.authorId, this.post.id])).pipe(
-      map(() => {}),
-    )
+    return from(
+      this.router.navigate(['posts', this.post.authorId, this.post.id])
+    ).pipe(map(() => {}));
   }
 }

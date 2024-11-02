@@ -22,7 +22,6 @@ import {
   map,
   Observable,
   of,
-  shareReplay,
   switchMap,
   throwError,
 } from 'rxjs';
@@ -160,22 +159,33 @@ export class PostsService {
   }
 
   getPostComments(postId: string, userId: string): Observable<Post[]> {
+    interface CommentRef {
+      postId: string;
+      authorId: string;
+    }
+
     const postCommentsQuery = query(
       collection(this.firestore, `users/${userId}/posts/${postId}/comments`),
       orderBy('createdAt', 'desc')
     );
 
-    return new Observable<string[]>((observer) => {
+    return new Observable<CommentRef[]>((observer) => {
       return onSnapshot(postCommentsQuery, (snapshot) => {
-        const commentIds = snapshot.docs.map((doc) => doc.data()['postId']);
-        observer.next(commentIds);
+        const commentRefs = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            postId: data['postId'],
+            authorId: data['authorId'],
+          } as CommentRef;
+        });
+        observer.next(commentRefs);
       });
     }).pipe(
-      switchMap((commentIds) =>
-        commentIds.length === 0
+      switchMap((commentRefs) =>
+        commentRefs.length === 0
           ? of([])
           : combineLatest(
-              commentIds.map((commentId) => this.getPost(commentId, userId))
+              commentRefs.map((ref) => this.getPost(ref.postId, ref.authorId))
             )
       ),
       catchError((error) => throwError(() => error))

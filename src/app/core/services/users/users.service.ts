@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { User } from '@shared/models/user.interface';
-import { Firestore, doc, getDoc } from '@angular/fire/firestore';
+import { Firestore, doc, getDocFromServer } from '@angular/fire/firestore';
 import { Observable, catchError, from, map, throwError } from 'rxjs';
 
 @Injectable({
@@ -11,7 +11,7 @@ export class UsersService {
 
   getUser(userId: string): Observable<User> {
     const userDoc = doc(this.firestore, 'users', userId);
-    return from(getDoc(userDoc)).pipe(
+    return from(getDocFromServer(userDoc)).pipe(
       map((snapshot) => {
         if (snapshot.exists()) {
           return {

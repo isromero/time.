@@ -74,6 +74,7 @@ export class CommentFormService {
             addDoc(commentsRef, {
               // Add the comment to the original post
               postId: postRef.id,
+              authorId: currentUser.uid,
               createdAt: new Date(),
             })
           );
