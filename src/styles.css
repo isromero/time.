@@ -72,7 +72,7 @@
 }
 
 .active-route {
-  @apply font-bold;
+  @apply font-bold bg-muted;
 }
 
 .cdk-describedby-message-container {
