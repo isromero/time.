@@ -88,13 +88,11 @@ export class PostsService {
             switchMap(() =>
               addDoc(userLikedPostsCollection, {
                 postId: post.id,
-                createdAt: new Date(),
               })
             )
           );
-        } else {
-          return of(undefined);
         }
+        return throwError(() => new Error('Already liked'));
       }),
       map(() => {}),
       catchError((error) => throwError(() => error))
@@ -115,19 +113,14 @@ export class PostsService {
       getDocs(query(likedPostsCollection, where('postId', '==', post.id)))
     ).pipe(
       switchMap((snapshot) => {
-        if (snapshot.docs.length) {
-          return deleteDoc(snapshot.docs[0].ref);
-        } else {
-          return of(undefined);
+        if (snapshot.docs.length > 0) {
+          return from(updateDoc(postDoc, { likes: increment(-1) })).pipe(
+            switchMap(() => deleteDoc(snapshot.docs[0].ref))
+          );
         }
+        return throwError(() => new Error('Not liked'));
       }),
-      switchMap(() => {
-        return from(
-          updateDoc(postDoc, {
-            likes: increment(-1),
-          })
-        );
-      }),
+      map(() => {}),
       catchError((error) => throwError(() => error))
     );
   }
@@ -152,9 +145,8 @@ export class PostsService {
     return from(
       getDocs(query(likedPostsCollection, where('postId', '==', post.id)))
     ).pipe(
-      map((snapshot) => {
-        return snapshot.docs.length > 0;
-      })
+      map((snapshot) => snapshot.docs.length > 0),
+      catchError((error) => throwError(() => error))
     );
   }
 

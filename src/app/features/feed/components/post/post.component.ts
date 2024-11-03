@@ -1,4 +1,11 @@
-import { Component, Input, OnInit, inject, signal } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Post } from '@shared/models/post.interface';
 import {
@@ -53,7 +60,24 @@ import { ActivatedRoute, Router } from '@angular/router';
   templateUrl: './post.component.html',
 })
 export class PostComponent implements OnInit {
-  @Input({ required: true }) post!: Post;
+  // We need to use set to check if the post has changed, for updating the like status
+  @Input() set post(value: Post) {
+    if (
+      this._post?.id !== value.id ||
+      this._post?.authorId !== value.authorId
+    ) {
+      this._post = value;
+      this.isLikedSignal.set(false);
+      this.isProcessingSignal.set(false);
+      this.checkLikeStatus();
+    } else {
+      this._post = value;
+    }
+  }
+  get post(): Post {
+    return this._post;
+  }
+  private _post!: Post;
   @Input() isDetail: boolean = false;
 
   route: ActivatedRoute = inject(ActivatedRoute);
@@ -65,26 +89,28 @@ export class PostComponent implements OnInit {
 
   imageDownloadUrls$: Observable<(string | null)[]> = of([]);
   user$: Observable<User> = of();
-  isLiked: boolean = false;
-  isLikeLoading: boolean = true;
+  isLikedSignal = signal<boolean>(false);
+  private isProcessingSignal = signal<boolean>(false);
   commentDialogState = signal<'open' | 'closed'>('closed');
 
+  readonly isDisabled = computed(() => this.isProcessingSignal());
+
   ngOnInit(): void {
+    this.imageDownloadUrls$ = this.getImageDownloadUrls();
+    this.user$ = this.usersService.getUser(this.post.authorId);
+  }
+
+  private checkLikeStatus(): void {
     this.postsService
       .isPostLiked(this.post, this.authService.currentUserSignal()!.uid)
       .subscribe({
         next: (liked) => {
-          this.isLiked = liked;
+          this.isLikedSignal.set(liked);
         },
         error: (error) => {
           console.log('Error getting the like status:', error);
         },
-        complete: () => {
-          this.isLikeLoading = false;
-        },
       });
-    this.imageDownloadUrls$ = this.getImageDownloadUrls();
-    this.user$ = this.usersService.getUser(this.post.authorId);
   }
 
   getGridClass(count: number): string {
@@ -115,34 +141,33 @@ export class PostComponent implements OnInit {
   }
 
   toggleLike(): void {
-    if (this.isLikeLoading) return;
-    this.isLikeLoading = true;
+    if (this.isProcessingSignal()) return;
+    this.isProcessingSignal.set(true);
 
     const currentUserId = this.authService.currentUserSignal()!.uid;
 
-    if (this.isLiked) {
-      this.isLiked = false;
-      this.post.likes--;
+    if (this.isLikedSignal()) {
       this.postsService.unlikePost(this.post, currentUserId).subscribe({
+        next: () => {
+          this.isLikedSignal.set(false);
+        },
         error: (error) => {
           console.log('Error unliking the post:', error);
-          this.isLiked = true;
-          this.post.likes++;
         },
         complete: () => {
-          this.isLikeLoading = false;
+          this.isProcessingSignal.set(false);
         },
       });
     } else {
-      this.isLiked = true;
-      this.post.likes++;
       this.postsService.likePost(this.post, currentUserId).subscribe({
-        error: () => {
-          this.isLiked = false;
-          this.post.likes--;
+        next: () => {
+          this.isLikedSignal.set(true);
+        },
+        error: (error) => {
+          console.log('Error liking the post:', error);
         },
         complete: () => {
-          this.isLikeLoading = false;
+          this.isProcessingSignal.set(false);
         },
       });
     }

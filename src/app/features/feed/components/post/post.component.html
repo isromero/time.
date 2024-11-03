@@ -44,16 +44,16 @@
     <div class="actions flex gap-x-4 mt-2">
       <button
         (click)="toggleLike()"
-        [disabled]="isLikeLoading"
+        [disabled]="isDisabled()"
         class="text-sm flex items-center gap-x-1"
         [ngClass]="
-          isLiked
+          isLikedSignal()
             ? 'text-destructive hover:text-muted-foreground'
             : 'hover:text-destructive'
         "
       >
         <app-hlm-icon
-          [name]="isLiked ? 'ionHeart' : 'ionHeartOutline'"
+          [name]="isLikedSignal() ? 'ionHeart' : 'ionHeartOutline'"
           size="sm"
         />
         <span class="block mb-1">{{ post.likes }}</span>

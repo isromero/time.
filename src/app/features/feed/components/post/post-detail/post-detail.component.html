@@ -7,10 +7,10 @@
   />
   <span class="mb-1 ml-2">Go back</span>
 </div>
-@if (post) {
+@if (post$ | async; as post) {
 <app-post [post]="post" [isDetail]="true" />
 }
 <span class="block font-bold my-4">Comentarios</span>
-@for (postComment of postComments$ | async; track postComment) {
+@for (postComment of postComments$ | async; track postComment.id) {
 <app-post [post]="postComment" />
 }
