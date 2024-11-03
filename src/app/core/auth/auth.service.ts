@@ -11,6 +11,7 @@ import {
 } from '@angular/fire/auth';
 import { doc, setDoc } from '@angular/fire/firestore';
 import { Firestore } from '@angular/fire/firestore';
+import { Storage, ref } from '@angular/fire/storage';
 import { User } from '@shared/models/user.interface';
 import {
   Observable,
@@ -28,6 +29,8 @@ import {
 export class AuthService {
   private firebaseAuth: Auth = inject(Auth);
   private firestore: Firestore = inject(Firestore);
+  private storage: Storage = inject(Storage);
+
   user$: Observable<User | null> = user(this.firebaseAuth);
   currentUserSignal = signal<User | null | undefined>(undefined);
 
@@ -55,10 +58,11 @@ export class AuthService {
         return from(
           setDoc(docRef, {
             uid: user.uid,
+            photoURL: ref(this.storage, 'avatar-default.png').fullPath,
             email,
             username: user.displayName,
             createdAt: new Date(),
-          })
+          } as User)
         ).pipe(map(() => {}));
       }),
       catchError((error) => throwError(() => error))

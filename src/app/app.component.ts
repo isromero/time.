@@ -23,6 +23,7 @@ export class AppComponent {
       if (user) {
         this.authService.currentUserSignal.set({
           uid: user.uid,
+          photoURL: user.photoURL,
           email: user.email,
           username: (user as any).displayName,
         });

@@ -8,8 +8,10 @@
 >
   <div class="flex gap-x-2 items-center">
     <hlm-avatar>
-      <img src="/assets/avatar.png" alt="Avatar" hlmAvatarImage />
-      <span class="text-white bg-destructive" hlmAvatarFallback>NOMBRE</span>
+      <img [src]="(user$ | async)?.photoURL" alt="Avatar" hlmAvatarImage />
+      <span class="text-white bg-destructive" hlmAvatarFallback>{{
+        (user$ | async)?.username
+      }}</span>
     </hlm-avatar>
     <span class="text-sm mb-1 text-left block"
       >&#64;{{ (user$ | async)?.username }}</span

@@ -87,6 +87,7 @@ export class PostComponent implements OnInit {
   postService: PostService = inject(PostService);
   authService: AuthService = inject(AuthService);
 
+  avatarDownloadUrl$: Observable<string | null> = of(null);
   imageDownloadUrls$: Observable<(string | null)[]> = of([]);
   user$: Observable<User> = of();
   isLikedSignal = signal<boolean>(false);
