@@ -1,11 +1,4 @@
-import {
-  Component,
-  Input,
-  OnInit,
-  computed,
-  inject,
-  signal,
-} from '@angular/core';
+import { Component, Input, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Post } from '@shared/models/post.interface';
 import {
@@ -13,7 +6,7 @@ import {
   HlmAvatarImageDirective,
   HlmAvatarFallbackDirective,
 } from '@spartan-ng/ui-avatar-helm';
-import { Observable, forkJoin, of, from, map } from 'rxjs';
+import { Observable, forkJoin, of, from, map, combineLatest } from 'rxjs';
 
 import {
   BrnDialogContentDirective,
@@ -36,6 +29,7 @@ import { UsersService } from '@core/services/users/users.service';
 import { User } from '@shared/models/user.interface';
 import { CommentFormComponent } from '@features/comment-form/comment-form.component';
 import { ActivatedRoute, Router } from '@angular/router';
+import { HlmSkeletonComponent } from '@spartan-ng/ui-skeleton-helm';
 
 @Component({
   selector: 'app-post',
@@ -56,10 +50,11 @@ import { ActivatedRoute, Router } from '@angular/router';
     RelativeTimePipe,
     IconComponent,
     CommentFormComponent,
+    HlmSkeletonComponent,
   ],
   templateUrl: './post.component.html',
 })
-export class PostComponent implements OnInit {
+export class PostComponent {
   // We need to use set to check if the post has changed, for updating the like status
   @Input() set post(value: Post) {
     if (
@@ -69,9 +64,8 @@ export class PostComponent implements OnInit {
       this._post = value;
       this.isLikedSignal.set(false);
       this.isProcessingSignal.set(false);
-      this.checkLikeStatus();
-    } else {
-      this._post = value;
+      this.isLoading.set(true);
+      this.initializePost();
     }
   }
   get post(): Post {
@@ -87,31 +81,37 @@ export class PostComponent implements OnInit {
   postService: PostService = inject(PostService);
   authService: AuthService = inject(AuthService);
 
-  avatarDownloadUrl$: Observable<string | null> = of(null);
   imageDownloadUrls$: Observable<(string | null)[]> = of([]);
   user$: Observable<User> = of();
+  isLoading = signal<boolean>(true);
   isLikedSignal = signal<boolean>(false);
   private isProcessingSignal = signal<boolean>(false);
   commentDialogState = signal<'open' | 'closed'>('closed');
 
   readonly isDisabled = computed(() => this.isProcessingSignal());
 
-  ngOnInit(): void {
-    this.imageDownloadUrls$ = this.getImageDownloadUrls();
-    this.user$ = this.usersService.getUser(this.post.authorId);
-  }
-
-  private checkLikeStatus(): void {
-    this.postsService
-      .isPostLiked(this.post, this.authService.currentUserSignal()!.uid)
-      .subscribe({
-        next: (liked) => {
-          this.isLikedSignal.set(liked);
-        },
-        error: (error) => {
-          console.log('Error getting the like status:', error);
-        },
-      });
+  private initializePost(): void {
+    this.isLoading.set(true);
+    combineLatest([
+      this.getImageDownloadUrls(),
+      this.usersService.getUser(this.post.authorId),
+      this.postsService.isPostLiked(
+        this.post,
+        this.authService.currentUserSignal()!.uid
+      ),
+    ]).subscribe({
+      next: ([imageUrls, user, isLiked]) => {
+        this.imageDownloadUrls$ = of(imageUrls);
+        this.user$ = of(user);
+        console.log(user);
+        this.isLikedSignal.set(isLiked);
+        this.isLoading.set(false);
+      },
+      error: (error) => {
+        console.error('Error initializing post:', error);
+        this.isLoading.set(false);
+      },
+    });
   }
 
   getGridClass(count: number): string {

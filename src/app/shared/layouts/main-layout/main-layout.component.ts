@@ -16,6 +16,8 @@ import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { ThemeService } from '@core/services/theme/theme.service';
 import { AuthService } from '@core/auth/auth.service';
 import { Router } from '@angular/router';
+import { LoadingComponent } from '../../components/loading/loading/loading.component';
+import { LoadingService } from '@core/services/loading/loading.service';
 
 @Component({
   selector: 'app-main-layout',
@@ -33,6 +35,7 @@ import { Router } from '@angular/router';
     HlmPopoverCloseDirective,
     HlmPopoverContentDirective,
     HlmButtonDirective,
+    LoadingComponent,
   ],
   templateUrl: './main-layout.component.html',
 })

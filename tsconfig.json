@@ -47,6 +47,9 @@
       ],
       "@spartan-ng/ui-dialog-helm": [
         "./libs/ui/ui-dialog-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-skeleton-helm": [
+        "./libs/ui/ui-skeleton-helm/src/index.ts"
       ]
     },
     "outDir": "./dist/out-tsc",

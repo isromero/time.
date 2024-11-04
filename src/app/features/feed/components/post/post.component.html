@@ -8,22 +8,28 @@
 >
   <div class="flex gap-x-2 items-center">
     <hlm-avatar>
-      <img [src]="(user$ | async)?.photoURL" alt="Avatar" hlmAvatarImage />
-      <span class="text-white bg-destructive" hlmAvatarFallback>{{
-        (user$ | async)?.username
-      }}</span>
+      <img hlmAvatarImage [src]="(user$ | async)?.photoURL" alt="Avatar" />
+      <hlm-skeleton hlmAvatarFallback />
     </hlm-avatar>
+    @if (isLoading()) {
+    <hlm-skeleton class="w-12 h-4" />
+    } @else {
     <span class="text-sm mb-1 text-left block"
       >&#64;{{ (user$ | async)?.username }}</span
     >
+    }
     <span class="text-sm mb-1 text-muted-foreground block">-</span>
     <span class="text-sm mb-1 text-muted-foreground block">{{
       post.createdAt | relativeTime
     }}</span>
   </div>
   <div class="pl-12">
+    @if (isLoading()) {
+    <hlm-skeleton class="h-4 mb-2" />
+    <hlm-skeleton class="h-4 mb-2" />
+    } @else {
     <p class="break-words">{{ post.postContent }}</p>
-    @if (imageDownloadUrls$ | async; as imageUrls) {
+    } @if (imageDownloadUrls$ | async; as imageUrls) {
     <div [ngClass]="['mt-2 grid gap-1', getGridClass(imageUrls.length)]">
       @for (imageUrl of imageUrls; track imageUrl; let i = $index) { @if
       (imageUrl) {
@@ -39,6 +45,10 @@
           class="w-full h-full object-cover rounded-lg"
           [ngStyle]="{ 'aspect-ratio': imageUrls.length === 1 ? '2/1' : '1/1' }"
         />
+      </div>
+      } @else {
+      <div class="relative">
+        <hlm-skeleton class="w-full h-[100px] rounded-lg" />
       </div>
       } }
     </div>
