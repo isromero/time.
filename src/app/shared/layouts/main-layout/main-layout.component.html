@@ -57,13 +57,11 @@
         >
           <hlm-avatar>
             <img
-              src="/assets/avatar.png"
-              alt="spartan logo. Resembling a spartanic shield"
               hlmAvatarImage
+              [src]="(user$ | async)?.photoURL"
+              alt="Avatar"
             />
-            <span class="text-white bg-destructive" hlmAvatarFallback
-              >NOMBRE</span
-            >
+            <hlm-skeleton hlmAvatarFallback />
           </hlm-avatar>
           <span class="text-sm mb-1 text-left"
             >&#64;{{ authService.currentUserSignal()?.username }}</span

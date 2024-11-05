@@ -1,7 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { IconComponent } from '@shared/components/ui/icon.component';
-import { HlmAvatarComponent } from '@spartan-ng/ui-avatar-helm';
+import {
+  HlmAvatarComponent,
+  HlmAvatarFallbackDirective,
+  HlmAvatarImageDirective,
+} from '@spartan-ng/ui-avatar-helm';
 import {
   BrnPopoverCloseDirective,
   BrnPopoverComponent,
@@ -17,17 +21,24 @@ import { ThemeService } from '@core/services/theme/theme.service';
 import { AuthService } from '@core/auth/auth.service';
 import { Router } from '@angular/router';
 import { LoadingComponent } from '../../components/loading/loading/loading.component';
-import { LoadingService } from '@core/services/loading/loading.service';
+import { UsersService } from '@core/services/users/users.service';
+import { Observable, of } from 'rxjs';
+import { User } from '@shared/models/user.interface';
+import { CommonModule } from '@angular/common';
+import { HlmSkeletonComponent } from '@spartan-ng/ui-skeleton-helm';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
   imports: [
+    CommonModule,
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
     IconComponent,
     HlmAvatarComponent,
+    HlmAvatarImageDirective,
+    HlmAvatarFallbackDirective,
     BrnPopoverCloseDirective,
     BrnPopoverComponent,
     BrnPopoverContentDirective,
@@ -36,13 +47,23 @@ import { LoadingService } from '@core/services/loading/loading.service';
     HlmPopoverContentDirective,
     HlmButtonDirective,
     LoadingComponent,
+    HlmSkeletonComponent,
   ],
   templateUrl: './main-layout.component.html',
 })
-export class MainLayoutComponent {
+export class MainLayoutComponent implements OnInit {
   themeService: ThemeService = inject(ThemeService);
+  usersService: UsersService = inject(UsersService);
   authService: AuthService = inject(AuthService);
   private router: Router = inject(Router);
+
+  user$: Observable<User> = of();
+
+  ngOnInit() {
+    this.user$ = this.usersService.getUser(
+      this.authService.currentUserSignal()!.uid
+    );
+  }
 
   logout(): void {
     this.authService.logout().subscribe({

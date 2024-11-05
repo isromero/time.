@@ -7,7 +7,7 @@
   (click)="!isDetail && navigateToPostDetail($event)"
 >
   <div class="flex gap-x-2 items-center">
-    <hlm-avatar>
+    <hlm-avatar class="profile" (click)="navigateToProfile($event)">
       <img hlmAvatarImage [src]="(user$ | async)?.photoURL" alt="Avatar" />
       <hlm-skeleton hlmAvatarFallback />
     </hlm-avatar>

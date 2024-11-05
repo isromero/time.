@@ -1,5 +1,9 @@
-import { Component, inject } from '@angular/core';
-import { HlmAvatarComponent } from '@spartan-ng/ui-avatar-helm';
+import { Component, OnInit, inject } from '@angular/core';
+import {
+  HlmAvatarComponent,
+  HlmAvatarFallbackDirective,
+  HlmAvatarImageDirective,
+} from '@spartan-ng/ui-avatar-helm';
 import { HlmInputDirective } from '@spartan-ng/ui-input-helm';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { IconComponent } from '@shared/components/ui/icon.component';
@@ -10,12 +14,21 @@ import {
   HlmTooltipTriggerDirective,
 } from '@spartan-ng/ui-tooltip-helm';
 import { PostFormService } from './post-form.service';
+import { UsersService } from '@core/services/users/users.service';
+import { Observable, of } from 'rxjs';
+import { User } from '@shared/models/user.interface';
+import { AuthService } from '@core/auth/auth.service';
+import { HlmSkeletonComponent } from '@spartan-ng/ui-skeleton-helm';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-post-form',
   standalone: true,
   imports: [
+    CommonModule,
     HlmAvatarComponent,
+    HlmAvatarImageDirective,
+    HlmAvatarFallbackDirective,
     HlmInputDirective,
     HlmButtonDirective,
     IconComponent,
@@ -23,16 +36,27 @@ import { PostFormService } from './post-form.service';
     BrnTooltipContentDirective,
     HlmTooltipComponent,
     HlmTooltipTriggerDirective,
+    HlmSkeletonComponent,
   ],
   templateUrl: './post-form.component.html',
 })
-export class PostFormComponent {
+export class PostFormComponent implements OnInit {
   postFormService: PostFormService = inject(PostFormService);
+  authService: AuthService = inject(AuthService);
+  usersService: UsersService = inject(UsersService);
+
+  user$: Observable<User> = of();
 
   postContent: string = '';
   uploadedImages: { file: File; url: string }[] = [];
   errorMaxImages: boolean = false;
   isSubmitting: boolean = false;
+
+  ngOnInit() {
+    this.user$ = this.usersService.getUser(
+      this.authService.currentUserSignal()!.uid
+    );
+  }
 
   createPost() {
     if (this.isSubmitting) return;

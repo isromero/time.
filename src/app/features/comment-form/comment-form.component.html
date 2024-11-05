@@ -4,12 +4,8 @@
   (submit)="comment()"
 >
   <hlm-avatar>
-    <img
-      src="/assets/avatar.png"
-      alt="spartan logo. Resembling a spartanic shield"
-      hlmAvatarImage
-    />
-    <span class="text-white bg-destructive" hlmAvatarFallback>NOMBRE</span>
+    <img hlmAvatarImage [src]="(user$ | async)?.photoURL" alt="Avatar" />
+    <hlm-skeleton hlmAvatarFallback />
   </hlm-avatar>
   <div class="flex flex-col w-full">
     <textarea

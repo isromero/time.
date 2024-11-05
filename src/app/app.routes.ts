@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './pages/home/home.component';
+import { HomeComponent } from '@pages/home/home.component';
 import { LoginComponent } from '@core/auth/login/login.component';
 import { RegisterComponent } from '@core/auth/register/register.component';
 import {
@@ -8,6 +8,7 @@ import {
   canActivate,
 } from '@angular/fire/auth-guard';
 import { MainLayoutComponent } from '@shared/layouts/main-layout/main-layout.component';
+import { ProfileComponent } from '@pages/profile/profile.component';
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['login']);
 const redirectLoggedInToHome = () => redirectLoggedInTo(['']);
@@ -37,8 +38,17 @@ export const routes: Routes = [
         title: 'Home | time.',
       },
       {
+        path: 'profile/:userId',
+        component: ProfileComponent,
+        title: 'Profile | time.',
+      },
+      {
         path: 'posts/:authorId/:postId',
-        loadComponent: () => import('./features/feed/components/post/post-detail/post-detail.component').then((m) => m.PostDetailComponent),
+        loadComponent: () =>
+          import(
+            './features/feed/components/post/post-detail/post-detail.component'
+          ).then((m) => m.PostDetailComponent),
+        title: 'Post | time.',
       },
       { path: 'home', redirectTo: '' },
       { path: '**', redirectTo: '' },

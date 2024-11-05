@@ -103,7 +103,6 @@ export class PostComponent {
       next: ([imageUrls, user, isLiked]) => {
         this.imageDownloadUrls$ = of(imageUrls);
         this.user$ = of(user);
-        console.log(user);
         this.isLikedSignal.set(isLiked);
         this.isLoading.set(false);
       },
@@ -184,11 +183,22 @@ export class PostComponent {
   }
 
   navigateToPostDetail(event: Event): Observable<void> {
-    if (event.target && (event.target as HTMLElement).closest('.actions')) {
+    if (
+      event.target &&
+      ((event.target as HTMLElement).closest('.actions') ||
+        (event.target as HTMLElement).closest('profile'))
+    ) {
       return of();
     }
     return from(
       this.router.navigate(['posts', this.post.authorId, this.post.id])
     ).pipe(map(() => {}));
+  }
+
+  navigateToProfile(event: Event): Observable<void> {
+    event.stopPropagation();
+    return from(this.router.navigate(['profile', this.post.authorId])).pipe(
+      map(() => {})
+    );
   }
 }
