@@ -1,12 +1,4 @@
-<div class="flex items-center">
-  <app-hlm-icon
-    name="lucideArrowLeft"
-    size="sm"
-    class="cursor-pointer"
-    (click)="navigateBack()"
-  />
-  <span class="mb-1 ml-2">Go back</span>
-</div>
+<app-go-back />
 @if (post$ | async; as post) {
 <app-post [post]="post" [isDetail]="true" />
 }

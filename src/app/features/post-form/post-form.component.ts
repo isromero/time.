@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   HlmAvatarComponent,
   HlmAvatarFallbackDirective,
@@ -40,23 +40,17 @@ import { CommonModule } from '@angular/common';
   ],
   templateUrl: './post-form.component.html',
 })
-export class PostFormComponent implements OnInit {
+export class PostFormComponent {
   postFormService: PostFormService = inject(PostFormService);
   authService: AuthService = inject(AuthService);
   usersService: UsersService = inject(UsersService);
 
-  user$: Observable<User> = of();
+  user$ = this.usersService.user$;
 
   postContent: string = '';
   uploadedImages: { file: File; url: string }[] = [];
   errorMaxImages: boolean = false;
   isSubmitting: boolean = false;
-
-  ngOnInit() {
-    this.user$ = this.usersService.getUser(
-      this.authService.currentUserSignal()!.uid
-    );
-  }
 
   createPost() {
     if (this.isSubmitting) return;

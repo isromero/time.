@@ -1,1 +1,29 @@
-<p>profile works!</p>
+<app-go-back />
+<div class="relative">
+  <img class="w-full h-44 object-cover" />
+  <button
+    type="button"
+    hlmTooltipTrigger
+    aria-describedby="Change photo"
+    (click)="uploadImageInput.click()"
+  >
+    <div class="group absolute w-20 h-20 -bottom-3 rounded-full border">
+      <img
+        [src]="(user$ | async)?.photoURL"
+        class="w-full h-full object-cover rounded-full"
+      />
+      <div class="absolute top-0 right-0 hidden group-hover:block">
+        <input
+          type="file"
+          id="upload_image"
+          name="upload_image"
+          accept="image/*"
+          class="hidden"
+          (change)="onImageUpload($event)"
+          #uploadImageInput
+        />
+        <app-hlm-icon name="lucidePencil" size="sm" />
+      </div>
+    </div>
+  </button>
+</div>

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { IconComponent } from '@shared/components/ui/icon.component';
 import {
@@ -51,19 +51,13 @@ import { HlmSkeletonComponent } from '@spartan-ng/ui-skeleton-helm';
   ],
   templateUrl: './main-layout.component.html',
 })
-export class MainLayoutComponent implements OnInit {
+export class MainLayoutComponent {
   themeService: ThemeService = inject(ThemeService);
   usersService: UsersService = inject(UsersService);
   authService: AuthService = inject(AuthService);
   private router: Router = inject(Router);
 
-  user$: Observable<User> = of();
-
-  ngOnInit() {
-    this.user$ = this.usersService.getUser(
-      this.authService.currentUserSignal()!.uid
-    );
-  }
+  user$ = this.usersService.user$;
 
   logout(): void {
     this.authService.logout().subscribe({
