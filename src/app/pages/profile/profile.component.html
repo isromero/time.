@@ -1,29 +1,80 @@
 <app-go-back />
 <div class="relative">
-  <img class="w-full h-44 object-cover" />
   <button
     type="button"
     hlmTooltipTrigger
     aria-describedby="Change photo"
-    (click)="uploadImageInput.click()"
+    (click)="changeBanner.click()"
+    [disabled]="!isMyProfile"
+    class="w-full"
   >
-    <div class="group absolute w-20 h-20 -bottom-3 rounded-full border">
+    <div class="group relative w-full h-44">
+      @if (userProfile$ | async; as user) { @if (isProfileLoading() ||
+      user.bannerURL === '') {
+      <hlm-skeleton class="w-full h-full" />
+      } @else {
       <img
-        [src]="(user$ | async)?.photoURL"
-        class="w-full h-full object-cover rounded-full"
+        [src]="user.bannerURL"
+        alt="Banner"
+        class="w-full h-full object-cover"
       />
-      <div class="absolute top-0 right-0 hidden group-hover:block">
-        <input
-          type="file"
-          id="upload_image"
-          name="upload_image"
-          accept="image/*"
-          class="hidden"
-          (change)="onImageUpload($event)"
-          #uploadImageInput
-        />
-        <app-hlm-icon name="lucidePencil" size="sm" />
+      } } @else {
+      <hlm-skeleton class="w-full h-full" />
+      }
+      <input
+        type="file"
+        id="upload_image"
+        name="upload_image"
+        accept="image/*"
+        class="hidden"
+        (change)="changeBannerURL($event)"
+        #changeBanner
+      />
+      @if (isMyProfile) {
+      <div
+        class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity"
+      >
+        <div class="absolute top-4 right-4">
+          <app-hlm-icon name="lucidePencil" size="sm" color="white" />
+        </div>
       </div>
+      }
+    </div>
+  </button>
+  <button
+    type="button"
+    hlmTooltipTrigger
+    aria-describedby="Change photo"
+    (click)="changePhoto.click()"
+    [disabled]="!isMyProfile"
+  >
+    <div class="group absolute w-20 h-20 -bottom-7 -left-2 rounded-full border">
+      <hlm-avatar class="w-full h-full object-cover rounded-full">
+        <img
+          hlmAvatarImage
+          [src]="(userProfile$ | async)?.photoURL"
+          alt="Avatar"
+        />
+        <hlm-skeleton hlmAvatarFallback />
+      </hlm-avatar>
+      <input
+        type="file"
+        id="upload_image"
+        name="upload_image"
+        accept="image/*"
+        class="hidden"
+        (change)="changePhotoURL($event)"
+        #changePhoto
+      />
+      @if (isMyProfile) {
+      <div
+        class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-full"
+      >
+        <div class="absolute top-0 right-0 hidden group-hover:block">
+          <app-hlm-icon name="lucidePencil" size="sm" color="white" />
+        </div>
+      </div>
+      }
     </div>
   </button>
 </div>

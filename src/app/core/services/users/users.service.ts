@@ -5,13 +5,16 @@ import {
   BehaviorSubject,
   Observable,
   catchError,
+  combineLatest,
   concatMap,
   from,
   map,
+  of,
   switchMap,
   throwError,
 } from 'rxjs';
 import {
+  deleteObject,
   getDownloadURL,
   ref,
   Storage,
@@ -38,25 +41,25 @@ export class UsersService {
       switchMap((snapshot) => {
         if (snapshot.exists()) {
           const userData = snapshot.data();
-          if (userData['photoURL']) {
-            const photoRef = ref(this.storage, userData['photoURL']);
-            return from(getDownloadURL(photoRef)).pipe(
-              map(
-                (downloadUrl) =>
-                  ({
-                    uid: snapshot.id,
-                    ...userData,
-                    photoURL: downloadUrl,
-                  } as User)
-              )
-            );
-          }
-          return from([
-            {
-              uid: snapshot.id,
-              ...userData,
-            } as User,
-          ]);
+          const photoURL$ = userData['photoURL']
+            ? from(getDownloadURL(ref(this.storage, userData['photoURL'])))
+            : of('');
+
+          const bannerURL$ = userData['bannerURL']
+            ? from(getDownloadURL(ref(this.storage, userData['bannerURL'])))
+            : of('');
+
+          return combineLatest([photoURL$, bannerURL$]).pipe(
+            map(
+              ([photoURL, bannerURL]) =>
+                ({
+                  uid: snapshot.id,
+                  ...userData,
+                  photoURL,
+                  bannerURL,
+                } as User)
+            )
+          );
         }
         throw new Error('User not found');
       }),
@@ -64,26 +67,38 @@ export class UsersService {
     );
   }
 
-  editImage(image: File, userId: string): Observable<void> {
-    const path = `users/${userId}/${image.name}_${Date.now()}`;
+  changeImage(
+    image: File,
+    userId: string,
+    typeImage: string
+  ): Observable<void> {
+    const path = `users/${userId}/${typeImage}/${image.name}_${Date.now()}`;
     const storageRef = ref(this.storage, path);
-    return from(uploadBytes(storageRef, image)).pipe(
-      concatMap(() => this.changeUserPhotoURL(path, userId)),
+    return from(
+      deleteObject(ref(this.storage, `users/${userId}/${typeImage}`))
+    ).pipe(
+      concatMap(() => uploadBytes(storageRef, image)),
+      concatMap(() => {
+        const userDoc = doc(this.firestore, 'users', userId);
+        if (typeImage === 'photoURL') {
+          return from(
+            updateDoc(userDoc, {
+              photoURL: path,
+            })
+          );
+        } else if (typeImage === 'bannerURL') {
+          return from(
+            updateDoc(userDoc, {
+              bannerURL: path,
+            })
+          );
+        } else {
+          return from(throwError(() => new Error('Invalid image type')));
+        }
+      }),
       concatMap(() => this.getUser(userId)),
       map((user) => this.userSubject.next(user)),
       catchError((error) => throwError(() => error))
-    );
-  }
-
-  private changeUserPhotoURL(
-    photoURL: string,
-    userId: string
-  ): Observable<void> {
-    const userDoc = doc(this.firestore, 'users', userId);
-    return from(
-      updateDoc(userDoc, {
-        photoURL,
-      })
     );
   }
 }

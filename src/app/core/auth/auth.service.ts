@@ -59,6 +59,7 @@ export class AuthService {
           setDoc(docRef, {
             uid: user.uid,
             photoURL: ref(this.storage, 'avatar-default.png').fullPath,
+            bannerURL: '',
             email,
             username: user.displayName,
             createdAt: new Date(),
