@@ -16,6 +16,7 @@ import {
 import {
   deleteObject,
   getDownloadURL,
+  listAll,
   ref,
   Storage,
   uploadBytes,
@@ -74,27 +75,23 @@ export class UsersService {
   ): Observable<void> {
     const path = `users/${userId}/${typeImage}/${image.name}_${Date.now()}`;
     const storageRef = ref(this.storage, path);
-    return from(
-      deleteObject(ref(this.storage, `users/${userId}/${typeImage}`))
-    ).pipe(
+    const folderRef = ref(this.storage, `users/${userId}/${typeImage}`);
+    return from(listAll(folderRef)).pipe(
+      concatMap(result => {
+        // Delete all files in the folder before uploading the new one for optimization
+        const deletePromises = result.items.map(item => deleteObject(item));
+        return deletePromises.length > 0 ? 
+          from(Promise.all(deletePromises)) : 
+          of(null);
+      }),
       concatMap(() => uploadBytes(storageRef, image)),
       concatMap(() => {
         const userDoc = doc(this.firestore, 'users', userId);
-        if (typeImage === 'photoURL') {
-          return from(
-            updateDoc(userDoc, {
-              photoURL: path,
-            })
-          );
-        } else if (typeImage === 'bannerURL') {
-          return from(
-            updateDoc(userDoc, {
-              bannerURL: path,
-            })
-          );
-        } else {
-          return from(throwError(() => new Error('Invalid image type')));
-        }
+        return from(
+          updateDoc(userDoc, {
+            [typeImage]: path,
+          })
+        );
       }),
       concatMap(() => this.getUser(userId)),
       map((user) => this.userSubject.next(user)),
