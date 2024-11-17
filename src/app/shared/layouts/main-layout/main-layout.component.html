@@ -58,7 +58,7 @@
           <hlm-avatar>
             <img
               hlmAvatarImage
-              [src]="(user$ | async)?.photoURL"
+              [src]="(currentUser$ | async)?.photoURL"
               alt="Avatar"
             />
             <hlm-skeleton hlmAvatarFallback />

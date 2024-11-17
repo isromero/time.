@@ -57,7 +57,7 @@ export class MainLayoutComponent {
   authService: AuthService = inject(AuthService);
   private router: Router = inject(Router);
 
-  user$ = this.usersService.user$;
+  currentUser$ = this.usersService.currentUser$;
 
   logout(): void {
     this.authService.logout().subscribe({

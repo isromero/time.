@@ -31,7 +31,7 @@ export class AuthService {
   private firestore: Firestore = inject(Firestore);
   private storage: Storage = inject(Storage);
 
-  user$: Observable<User | null> = user(this.firebaseAuth);
+  currentUser$: Observable<User | null> = user(this.firebaseAuth);
   currentUserSignal = signal<User | null | undefined>(undefined);
 
   register(

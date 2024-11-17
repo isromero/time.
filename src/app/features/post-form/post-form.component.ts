@@ -15,7 +15,6 @@ import {
 } from '@spartan-ng/ui-tooltip-helm';
 import { PostFormService } from './post-form.service';
 import { UsersService } from '@core/services/users/users.service';
-import { Observable, of } from 'rxjs';
 import { User } from '@shared/models/user.interface';
 import { AuthService } from '@core/auth/auth.service';
 import { HlmSkeletonComponent } from '@spartan-ng/ui-skeleton-helm';
@@ -45,7 +44,7 @@ export class PostFormComponent {
   authService: AuthService = inject(AuthService);
   usersService: UsersService = inject(UsersService);
 
-  user$ = this.usersService.user$;
+  currentUser$ = this.usersService.currentUser$;
 
   postContent: string = '';
   uploadedImages: { file: File; url: string }[] = [];

@@ -30,7 +30,7 @@ export class UsersService {
   private storage: Storage = inject(Storage);
 
   private userSubject = new BehaviorSubject({} as User);
-  user$: Observable<User> = this.userSubject.asObservable();
+  currentUser$: Observable<User> = this.userSubject.asObservable();
 
   loadUser(userId: string): void {
     this.getUser(userId).subscribe((user) => this.userSubject.next(user));

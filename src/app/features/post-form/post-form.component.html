@@ -4,7 +4,7 @@
   (submit)="createPost()"
 >
   <hlm-avatar>
-    <img hlmAvatarImage [src]="(user$ | async)?.photoURL" alt="Avatar" />
+    <img hlmAvatarImage [src]="(currentUser$ | async)?.photoURL" alt="Avatar" />
     <hlm-skeleton hlmAvatarFallback />
   </hlm-avatar>
   <div class="flex flex-col w-full">

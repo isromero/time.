@@ -23,14 +23,14 @@ export class AppComponent {
     /* Init theme */
     this.themeService.updateTheme();
     /* Init current user signal */
-    this.authService.user$.subscribe((user) => {
-      if (user) {
+    this.authService.currentUser$.subscribe((currentUser) => {
+      if (currentUser) {
         this.authService.currentUserSignal.set({
-          uid: user.uid,
-          photoURL: user.photoURL,
-          bannerURL: user.bannerURL,
-          email: user.email,
-          username: (user as any).displayName,
+          uid: currentUser.uid,
+          photoURL: currentUser.photoURL,
+          bannerURL: currentUser.bannerURL,
+          email: currentUser.email,
+          username: (currentUser as any).displayName,
         });
         /* Init global state user */
         this.usersService.loadUser(this.authService.currentUserSignal()!.uid);
